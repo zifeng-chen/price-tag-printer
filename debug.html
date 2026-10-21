@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Debug Test</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { createApp, ref, computed } from '/node_modules/.vite/deps/vue.js?v=e159240f';
+    
+    const App = {
+      setup() {
+        const msg = ref('Hello Vue');
+        return { msg };
+      },
+      template: '<h1>{{ msg }}</h1>'
+    };
+    
+    createApp(App).mount('#app');
+  </script>
+</body>
+</html>
