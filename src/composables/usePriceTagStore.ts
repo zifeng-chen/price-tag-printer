@@ -6,7 +6,7 @@ import { PRESET_CARDS } from '../preset-data';
 const STORAGE_KEY = 'price-tag-printer-data';
 const SELECTED_KEY = 'price-tag-printer-selected';
 const VERSION_KEY = 'price-tag-printer-version';
-const CURRENT_VERSION = '2';
+const CURRENT_VERSION = '3';
 
 function loadFromStorage(): CardData[] {
   try {

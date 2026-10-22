@@ -41,13 +41,15 @@ defineProps<{
               <span>{{ product.config }}</span>
               <span class="price">
                 <span class="color-text">{{ color.name }}</span>
-                <span>¥</span><span>{{ color.price }}</span>
+                <span v-if="(color.subsidyPrice || 0) > 0" class="subsidy-price">¥{{ color.subsidyPrice }}</span>
+                <span class="origin-price" :class="{ 'with-subsidy': (color.subsidyPrice || 0) > 0 }">¥{{ color.price }}</span>
               </span>
             </div>
             <div v-else class="product-row">
               <span class="price" style="margin-left:auto;">
                 <span class="color-text">{{ color.name }}</span>
-                <span>¥</span><span>{{ color.price }}</span>
+                <span v-if="(color.subsidyPrice || 0) > 0" class="subsidy-price">¥{{ color.subsidyPrice }}</span>
+                <span class="origin-price" :class="{ 'with-subsidy': (color.subsidyPrice || 0) > 0 }">¥{{ color.price }}</span>
               </span>
             </div>
           </template>
@@ -276,6 +278,30 @@ defineProps<{
     font-weight: 700;
     color: #000;
     flex: none;
+}
+
+/* 国补价（在前，突出显示） */
+.subsidy-price {
+    font-size: 13px;
+    font-weight: 900;
+    color: #000;
+    flex: none;
+}
+
+/* 原价（在后） */
+.origin-price {
+    font-size: 13px;
+    font-weight: 900;
+    color: #000;
+    flex: none;
+}
+
+/* 存在国补价时，原价弱化并加删除线 */
+.origin-price.with-subsidy {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    text-decoration: line-through;
 }
 
 /* ============================================================

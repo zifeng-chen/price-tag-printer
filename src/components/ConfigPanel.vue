@@ -199,7 +199,7 @@ function confirmDeleteService(index: number) {
 function addColor(productIndex: number) {
   const card = currentCard.value;
   if (!card || !canAddColor(card)) return;
-  card.products[productIndex].colors.push({ name: '', price: 0 });
+  card.products[productIndex].colors.push({ name: '', subsidyPrice: 0, price: 0 });
 }
 
 function deleteColor(productIndex: number, colorIndex: number) {
@@ -418,7 +418,8 @@ function deleteFeature(index: number) {
               </div>
               <div v-for="(color, cIdx) in product.colors" :key="cIdx" class="color-row">
                 <input type="text" v-model="color.name" placeholder="颜色" />
-                <input type="number" v-model.number="color.price" placeholder="价格" />
+                <input type="number" v-model.number="color.subsidyPrice" placeholder="国补价" />
+                <input type="number" v-model.number="color.price" placeholder="原价" />
                 <button class="btn-delete" @click="deleteColor(pIdx, cIdx)">×</button>
               </div>
               <button class="btn-add-color" :disabled="!canAddColor(currentCard)" @click="addColor(pIdx)">+ 添加颜色</button>
@@ -891,8 +892,8 @@ function deleteFeature(index: number) {
   margin-bottom: 10px;
 }
 
-.color-row input[type="text"] { flex: 1; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; }
-.color-row input[type="number"] { width: 110px; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; }
+.color-row input[type="text"] { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; }
+.color-row input[type="number"] { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; }
 .color-row input:focus { border-color: #FF6A00; }
 
 .btn-add-color {

@@ -1,6 +1,7 @@
 export interface ColorItem {
   name: string;
-  price: number;
+  subsidyPrice?: number; // 国补价（空/0 表示不展示）
+  price: number;         // 原价
 }
 
 export interface ProductItem {
@@ -59,20 +60,20 @@ export function createDefaultCard(): CardData {
       {
         config: '酷睿Ultra7 RTX5060 32G 1T',
         colors: [
-          { name: '黑', price: 14999 },
-          { name: '白', price: 15499 },
+          { name: '黑', subsidyPrice: 0, price: 14999 },
+          { name: '白', subsidyPrice: 0, price: 15499 },
         ],
       },
       {
         config: '酷睿Ultra9 RTX5060 32G 1T',
         colors: [
-          { name: '黑', price: 15999 },
-          { name: '白', price: 16499 },
+          { name: '黑', subsidyPrice: 0, price: 15999 },
+          { name: '白', subsidyPrice: 0, price: 16499 },
         ],
       },
       {
         config: '酷睿Ultra9 RTX5070 32G 1T',
-        colors: [{ name: '黑', price: 16999 }],
+        colors: [{ name: '黑', subsidyPrice: 0, price: 16999 }],
       },
     ],
     showAccessory: true,
