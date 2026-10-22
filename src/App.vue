@@ -40,6 +40,8 @@ const previewCards = computed(() => {
   return cards.value.filter(c => ids.has(c.id));
 });
 
+const activeCardId = computed(() => cards.value[activeIndex.value]?.id);
+
 const printPages = computed<CardData[][]>(() => {
   const list = store.selectedCards.value;
   const result: CardData[][] = [];
@@ -64,6 +66,16 @@ function confirmDelete(index: number) {
     title: '确认删除',
     content: `确定要删除展牌「${name}」吗？`,
     onOk: () => store.deleteCard(index),
+  });
+}
+
+function confirmDeleteSelected() {
+  const count = selectedIds.value.size;
+  if (count === 0) return;
+  Modal.confirm({
+    title: '确认删除',
+    content: `确定要删除选中的 ${count} 张展牌吗？`,
+    onOk: () => store.deleteSelected(),
   });
 }
 
@@ -96,7 +108,7 @@ function handleImportCopy() {
         </div>
 
         <div class="sidebar-search">
-          <i-input v-model:value="searchQuery" placeholder="搜索产品名称..." search clearable size="small" />
+          <i-input v-model:model-value="searchQuery" placeholder="搜索产品名称..." search clearable size="small" />
         </div>
 
         <div class="sidebar-list">
@@ -128,6 +140,11 @@ function handleImportCopy() {
             <Button size="small" type="primary" icon="md-add" @click="store.addCard()" style="flex:1">新建</Button>
           </div>
           <div class="footer-row">
+            <Button size="small" long type="error" icon="md-trash" :disabled="selectedIds.size === 0" @click="confirmDeleteSelected">
+              删除选中（{{ selectedIds.size }}）
+            </Button>
+          </div>
+          <div class="footer-row">
             <Button size="small" @click="store.exportSelected()" style="flex:1">导出选中</Button>
             <Button size="small" @click="store.exportData()" style="flex:1">导出全部</Button>
           </div>
@@ -150,7 +167,7 @@ function handleImportCopy() {
 
       <!-- Right: Preview Panel -->
       <div class="preview-wrapper">
-        <PreviewPanel :cards="previewCards" @delete-card="handleDeleteById($event)" />
+        <PreviewPanel :cards="previewCards" :active-card-id="activeCardId" @delete-card="handleDeleteById($event)" />
       </div>
     </div>
 

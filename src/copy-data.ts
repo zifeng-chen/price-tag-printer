@@ -5,8 +5,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy014280387012",
     "productTitle": "YOGA Pro 15 Aura AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "紧凑机身 便携大屏 超轻重量",
@@ -86,8 +84,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy021242886303",
     "productTitle": "YOGA Pro 16 Aura AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "超高亮双层OLED专业超感屏",
@@ -149,8 +145,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy033337446730",
     "productTitle": "小新 Pro 16 GT AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "不妥协的大尺寸高性能轻薄本",
@@ -221,8 +215,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy046308786135",
     "productTitle": "小新 Pro 14 GT AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "高性能兼顾长续航 便于携带",
@@ -293,8 +285,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy057970309701",
     "productTitle": "小新 Pro 16 AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "1100尼特星耀舒视屏",
@@ -365,8 +355,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy064530265750",
     "productTitle": "小新 Pro 14 AI元启版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "1100尼特星耀舒视屏",
@@ -437,8 +425,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy075942859575",
     "productTitle": "拯救者 Y9000P",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "联想天禧个人超级智能体",
@@ -518,8 +504,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy086268661555",
     "productTitle": "拯救者 R7000X",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "轻薄高颜值 X基因",
@@ -573,8 +557,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy096898329840",
     "productTitle": "拯救者 Y7000X",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "轻薄高颜值 X基因",
@@ -645,8 +627,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy103454155475",
     "productTitle": "YOGA Air 14 Ultra",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "轻薄坚固美学",
@@ -726,8 +706,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy117294919105",
     "productTitle": "YOGA Air 14",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "极致轻薄机身",
@@ -789,8 +767,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy127333232862",
     "productTitle": "联想小新Air14 2026",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "11.9mm致薄 约1.06kg超轻",
@@ -853,8 +829,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy136407400315",
     "productTitle": "来酷Lecoo Air16酷睿版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "约1kg超轻薄机身",
@@ -925,8 +899,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy145038782778",
     "productTitle": "来酷Lecoo Air14酷睿版",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "约990g与约12.95mm超薄轻机身",
@@ -988,8 +960,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy155145683452",
     "productTitle": "联想LOQ 15",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "RTX3050 光追独显",
@@ -1051,8 +1021,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy166847695787",
     "productTitle": "YOGA Pro 15 N1X11",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "无网本地运行",
@@ -1123,8 +1091,6 @@ export const COPY_CARDS: CardData[] = [
     "id": "copy177536871105",
     "productTitle": "来酷GT16",
     "showProductImage": true,
-    "productImageType": "default",
-    "productImageSrc": "",
     "features": [
       {
         "title": "入门游戏优选",

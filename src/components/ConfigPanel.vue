@@ -5,7 +5,7 @@ import type { CardData } from '../types';
 import { useAccessoryStore } from '../accessory-data';
 import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
-import { BUILTIN_ICONS, ICON_CATEGORIES } from '../icon-library';
+import { BUILTIN_ICONS, ICON_CATEGORIES, ICON_COPY_MAP } from '../icon-library';
 import type { FeatureItem } from '../types';
 
 const accessoryStore = useAccessoryStore();
@@ -19,7 +19,6 @@ const props = defineProps<{
 const currentCard = computed(() => props.cards[props.activeIndex]);
 
 const collapsed = ref({
-  productImage: false,
   features: false,
   products: false,
   accessory: false,
@@ -59,16 +58,6 @@ function canAddProduct(card: CardData): boolean {
 
 function canAddColor(card: CardData): boolean {
   return getTotalColorRows(card) < MAX_COLOR_ROWS;
-}
-
-function uploadProductImage(event: Event) {
-  const card = currentCard.value;
-  if (!card) return;
-  const file = (event.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => { card.productImageSrc = reader.result as string; };
-  reader.readAsDataURL(file);
 }
 
 function addProduct() {
@@ -199,7 +188,22 @@ function confirmDeleteService(index: number) {
 function addColor(productIndex: number) {
   const card = currentCard.value;
   if (!card || !canAddColor(card)) return;
-  card.products[productIndex].colors.push({ name: '', subsidyPrice: 0, price: 0 });
+  card.products[productIndex].colors.push({ name: '', price: 0 });
+}
+
+// 国补价为空（0 或未填）时输入框留空，避免回显 0
+function onSubsidyInput(color: { subsidyPrice?: number }, e: Event) {
+  const raw = (e.target as HTMLInputElement).value;
+  color.subsidyPrice = raw === '' ? 0 : Number(raw);
+}
+
+function onPriceInput(color: { price: number }, e: Event) {
+  const raw = (e.target as HTMLInputElement).value;
+  color.price = raw === '' ? 0 : Number(raw);
+}
+
+function priceFieldValue(v?: number): string | number {
+  return v && v > 0 ? v : '';
 }
 
 function deleteColor(productIndex: number, colorIndex: number) {
@@ -230,9 +234,53 @@ function uploadFeatureImage(idx: number, event: Event) {
 
 function onIconTypeChange(feature: FeatureItem) {
   feature.iconSrc = '';
-  if (feature.iconType === 'builtin' && !feature.iconName) {
-    feature.iconName = BUILTIN_ICONS[0].name;
+  feature.linkedCopy = '';
+  if (feature.iconType === 'builtin') {
+    if (!feature.iconName) feature.iconName = BUILTIN_ICONS[0].name;
+    // 内置图标固定 100% 大小
+    feature.iconSize = 100;
+    applyDefaultCopy(feature);
+  } else if (feature.iconSize === 100) {
+    feature.iconSize = 70;
   }
+}
+
+function linkedCopyOptions(feature: FeatureItem) {
+  if (feature.iconType !== 'builtin' || !feature.iconName) return [];
+  return ICON_COPY_MAP[feature.iconName] || [];
+}
+
+function copyKey(copy: { title: string; desc: string }) {
+  return `${copy.title}\u0000${copy.desc}`;
+}
+
+// 自动套用第一个关联文案
+function applyDefaultCopy(feature: FeatureItem) {
+  const first = linkedCopyOptions(feature)[0];
+  if (!first) {
+    feature.linkedCopy = '';
+    return;
+  }
+  feature.linkedCopy = copyKey(first);
+  feature.title = first.title;
+  feature.desc = first.desc;
+}
+
+function selectBuiltinIcon(feature: FeatureItem, name: string) {
+  if (feature.iconName === name) return;
+  feature.iconName = name;
+  feature.iconSize = 100;
+  applyDefaultCopy(feature);
+}
+
+// 选择关联文案时填入标题/副标题，但保留 linkedCopy 记录来源，手动编辑不会清除它
+function selectLinkedCopy(feature: FeatureItem, key: string) {
+  feature.linkedCopy = key;
+  if (!key) return;
+  const copy = linkedCopyOptions(feature).find(c => copyKey(c) === key);
+  if (!copy) return;
+  feature.title = copy.title;
+  feature.desc = copy.desc;
 }
 
 function iconsByCategory(category: string) {
@@ -242,7 +290,7 @@ function iconsByCategory(category: string) {
 function addFeature() {
   const card = currentCard.value;
   if (!card || card.features.length >= MAX_FEATURES) return;
-  card.features.push({ title: '', desc: '', iconType: 'builtin', iconName: BUILTIN_ICONS[0].name, iconSrc: '', iconSize: 70 });
+  card.features.push({ title: '', desc: '', iconType: 'builtin', iconName: BUILTIN_ICONS[0].name, iconSrc: '', iconSize: 70, linkedCopy: '' });
   featureCollapsed.value.push(false);
 }
 
@@ -268,42 +316,17 @@ function deleteFeature(index: number) {
     <div class="config-body">
       <template v-if="currentCard">
         <div class="form-group">
-          <label>产品名称</label>
-          <input type="text" v-model="currentCard.productTitle" />
-        </div>
-
-        <!-- 产品图片 -->
-        <div class="config-section">
-          <h3 class="section-header" @click="toggleSection('productImage')">
-            <span class="collapse-arrow" :class="{ collapsed: collapsed.productImage }">▾</span>
-            产品图片
-          </h3>
-          <div v-show="!collapsed.productImage">
-            <div class="switch-wrapper">
-              <label class="switch">
+          <div class="name-row">
+            <label>产品名称</label>
+            <div class="name-switch">
+              <label class="switch" :title="currentCard.showProductImage ? '隐藏AI图标' : '显示AI图标'">
                 <input type="checkbox" v-model="currentCard.showProductImage" />
                 <span class="switch-slider"></span>
               </label>
-              <label>显示产品图片</label>
-            </div>
-            <div class="sub-panel" :class="{ show: currentCard.showProductImage }">
-              <div class="form-group">
-                <label>图片类型</label>
-                <select v-model="currentCard.productImageType">
-                  <option value="default">默认图标</option>
-                  <option value="custom">自定义图片</option>
-                </select>
-              </div>
-              <div v-if="currentCard.productImageType === 'custom'" class="form-group">
-                <label>上传图片</label>
-                <div class="image-preview-box" @click="(($refs.productImageInput as HTMLInputElement).click())">
-                  <img v-if="currentCard.productImageSrc" :src="currentCard.productImageSrc" alt="产品图片" />
-                  <span v-else>点击上传</span>
-                </div>
-                <input ref="productImageInput" type="file" class="hidden-input" accept="image/*" @change="uploadProductImage" />
-              </div>
+              <span class="name-switch-text">AI图标</span>
             </div>
           </div>
+          <input type="text" v-model="currentCard.productTitle" />
         </div>
 
         <!-- 卖点信息 -->
@@ -327,17 +350,8 @@ function deleteFeature(index: number) {
                 </div>
                 <div v-show="!featureCollapsed[idx]" class="feature-body">
                   <div class="form-group">
-                    <label>标题</label>
-                    <input type="text" v-model="feature.title" />
-                  </div>
-                  <div class="form-group">
-                    <label>副标题</label>
-                    <input type="text" v-model="feature.desc" />
-                  </div>
-                  <div class="form-group">
                     <label>图标</label>
                     <select v-model="feature.iconType" @change="onIconTypeChange(feature)">
-                      <option value="default">默认色块</option>
                       <option value="builtin">内置图标</option>
                       <option value="image">上传图片</option>
                       <option value="svg">粘贴SVG代码</option>
@@ -355,7 +369,7 @@ function deleteFeature(index: number) {
                             class="builtin-icon-item"
                             :class="{ active: feature.iconName === icon.name }"
                             :title="icon.name"
-                            @click="feature.iconName = icon.name"
+                            @click="selectBuiltinIcon(feature, icon.name)"
                           >
                             <img :src="icon.src" :alt="icon.name" />
                             <span>{{ icon.name }}</span>
@@ -365,7 +379,7 @@ function deleteFeature(index: number) {
                     </div>
                     <div class="icon-size-inline" style="margin-top:6px;">
                       <label>大小（%）</label>
-                      <input type="number" v-model.number="feature.iconSize" min="1" max="100" step="1" />
+                      <input type="number" :value="100" disabled title="内置图标固定为 100%" />
                     </div>
                   </div>
                   <div v-if="feature.iconType === 'image'" class="form-group icon-row">
@@ -384,6 +398,23 @@ function deleteFeature(index: number) {
                       <input type="number" v-model.number="feature.iconSize" min="1" max="100" step="1" />
                     </div>
                   </div>
+                  <div v-if="linkedCopyOptions(feature).length" class="form-group">
+                    <label>关联文案</label>
+                    <select :value="feature.linkedCopy" @change="(e: Event) => selectLinkedCopy(feature, (e.target as HTMLSelectElement).value)">
+                      <option value="">自定义文案</option>
+                      <option v-for="(c, ci) in linkedCopyOptions(feature)" :key="ci" :value="copyKey(c)">
+                        {{ c.title }}｜{{ c.desc }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" v-model="feature.title" />
+                  </div>
+                  <div class="form-group">
+                    <label>副标题</label>
+                    <input type="text" v-model="feature.desc" />
+                  </div>
                 </div>
               </div>
             </template>
@@ -400,13 +431,13 @@ function deleteFeature(index: number) {
           <h3 class="section-header" @click="toggleSection('products')">
             <span class="collapse-arrow" :class="{ collapsed: collapsed.products }">▾</span>
             产品价格配置
-          </h3>
-          <div v-show="!collapsed.products">
-            <div class="spacing-control">
+            <div class="spacing-control" @click.stop>
               <label>价格行间距</label>
               <input type="range" v-model.number="currentCard.priceRowSpacing" min="0" max="12" step="1" />
               <span class="spacing-value">{{ (currentCard.priceRowSpacing || 0) > 0 ? '+' : '' }}{{ currentCard.priceRowSpacing || 0 }}px</span>
             </div>
+          </h3>
+          <div v-show="!collapsed.products">
             <div v-for="(product, pIdx) in currentCard.products" :key="pIdx" class="product-item">
               <div class="product-item-header">
                 <span>产品 {{ pIdx + 1 }}</span>
@@ -418,8 +449,8 @@ function deleteFeature(index: number) {
               </div>
               <div v-for="(color, cIdx) in product.colors" :key="cIdx" class="color-row">
                 <input type="text" v-model="color.name" placeholder="颜色" />
-                <input type="number" v-model.number="color.subsidyPrice" placeholder="国补价" />
-                <input type="number" v-model.number="color.price" placeholder="原价" />
+                <input type="number" :value="priceFieldValue(color.subsidyPrice)" @input="onSubsidyInput(color, $event)" placeholder="国补价" />
+                <input type="number" :value="priceFieldValue(color.price)" @input="onPriceInput(color, $event)" placeholder="原价" />
                 <button class="btn-delete" @click="deleteColor(pIdx, cIdx)">×</button>
               </div>
               <button class="btn-add-color" :disabled="!canAddColor(currentCard)" @click="addColor(pIdx)">+ 添加颜色</button>
@@ -514,6 +545,12 @@ function deleteFeature(index: number) {
               </select>
             </div>
           </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="empty-hint">
+          <p>暂无展牌</p>
+          <p class="empty-hint-sub">点击左侧「新建」添加一张展牌</p>
         </div>
       </template>
     </div>
@@ -622,6 +659,23 @@ function deleteFeature(index: number) {
   flex: 1;
 }
 
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  gap: 6px;
+  color: #999;
+  font-size: 14px;
+}
+
+.empty-hint-sub {
+  font-size: 12px;
+  color: #bbb;
+}
+
 .form-group { margin-bottom: 18px; }
 
 .form-group label {
@@ -659,25 +713,26 @@ function deleteFeature(index: number) {
 .spacing-control {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
+  gap: 8px;
+  margin-left: auto;
+  padding: 2px 8px;
   background: #fafafa;
   border-radius: 6px;
   font-size: 12px;
+  font-weight: 400;
   color: #666;
 }
 
 .spacing-control label { white-space: nowrap; }
 
 .spacing-control input[type="range"] {
-  flex: 1;
+  width: 80px;
   accent-color: #FF6A00;
   cursor: pointer;
 }
 
 .spacing-value {
-  min-width: 40px;
+  min-width: 36px;
   text-align: right;
   font-weight: 600;
   color: #FF6A00;
@@ -772,6 +827,37 @@ function deleteFeature(index: number) {
 
 .collapse-arrow.collapsed { transform: rotate(-90deg); }
 
+.name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.name-row label {
+  margin-bottom: 0;
+}
+
+.name-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-row .switch {
+  display: block;
+  width: 24px;
+  height: 13px;
+  margin-bottom: 0;
+}
+
+.name-switch-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
 .switch-wrapper {
   display: flex;
   align-items: center;
@@ -816,6 +902,16 @@ function deleteFeature(index: number) {
 
 .switch input:checked + .switch-slider { background: #FF6A00; }
 .switch input:checked + .switch-slider::before { transform: translateX(16px); }
+
+/* 产品名称右侧的小号开关 */
+.name-switch .switch-slider { border-radius: 13px; }
+
+.name-switch .switch-slider::before {
+  width: 9px; height: 9px;
+  left: 2px; bottom: 2px;
+}
+
+.name-switch .switch input:checked + .switch-slider::before { transform: translateX(11px); }
 
 .sub-panel {
   display: none;
@@ -996,6 +1092,13 @@ function deleteFeature(index: number) {
 }
 
 .icon-size-inline input:focus { border-color: #FF6A00; }
+
+.icon-size-inline input:disabled {
+  background: #f2f2f2;
+  color: #999;
+  border-color: #e2e2e2;
+  cursor: not-allowed;
+}
 
 .builtin-icon-picker {
   max-height: 260px;

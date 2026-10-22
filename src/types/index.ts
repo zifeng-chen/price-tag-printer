@@ -12,18 +12,17 @@ export interface ProductItem {
 export interface FeatureItem {
   title: string;
   desc: string;
-  iconType: 'default' | 'image' | 'svg' | 'builtin';
+  iconType: 'image' | 'svg' | 'builtin';
   iconName: string; // builtin icon name from icon-library
   iconSrc: string;
   iconSize: number; // 1-100, percentage of color block size
+  linkedCopy?: string; // 已选关联文案的来源标识（title\0desc），仅作标记，不覆盖手动编辑
 }
 
 export interface CardData {
   id: string;
   productTitle: string;
   showProductImage: boolean;
-  productImageType: 'default' | 'custom';
-  productImageSrc: string;
   features: FeatureItem[];
   products: ProductItem[];
   showAccessory: boolean;
@@ -48,8 +47,6 @@ export function createDefaultCard(): CardData {
     id: generateId(),
     productTitle: 'YOGA Pro 15 Aura AI元启版',
     showProductImage: true,
-    productImageType: 'default',
-    productImageSrc: '',
     features: [
       { title: '紧凑机身 便携大屏', desc: '15英寸 轻至1.69kg', iconType: 'builtin', iconName: '屏幕', iconSrc: '', iconSize: 70 },
       { title: '联想天禧AI智能体', desc: '系统级智能交互', iconType: 'builtin', iconName: '智能体', iconSrc: '', iconSize: 70 },

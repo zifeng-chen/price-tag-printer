@@ -6,9 +6,9 @@ import { PRESET_CARDS } from '../preset-data';
 const STORAGE_KEY = 'price-tag-printer-data';
 const SELECTED_KEY = 'price-tag-printer-selected';
 const VERSION_KEY = 'price-tag-printer-version';
-const CURRENT_VERSION = '3';
+const CURRENT_VERSION = '4';
 
-function loadFromStorage(): CardData[] {
+function loadFromStorage(): CardData[] | null {
   try {
     const version = localStorage.getItem(VERSION_KEY);
     if (version !== CURRENT_VERSION) {
@@ -16,17 +16,16 @@ function loadFromStorage(): CardData[] {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(SELECTED_KEY);
       localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-      return [];
+      return null;
     }
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      if (Array.isArray(data) && data.length > 0 && data[0]?.products) {
-        return data;
-      }
+      // Ignore an empty list so the preset is shown again after a full delete
+      if (Array.isArray(data) && data.length > 0) return data;
     }
   } catch { /* ignore */ }
-  return [];
+  return null;
 }
 
 function loadSelected(ids: string[]): Set<string> {
@@ -40,10 +39,24 @@ function loadSelected(ids: string[]): Set<string> {
   return new Set(ids);
 }
 
+// 序列化时清理国补价 0：未填写则不留字段
+function serializeCards(list: CardData[]): string {
+  const cleaned = list.map(card => ({
+    ...card,
+    products: card.products.map(p => ({
+      ...p,
+      colors: p.colors.map(c => {
+        const { subsidyPrice, ...rest } = c;
+        return subsidyPrice && subsidyPrice > 0 ? { ...rest, subsidyPrice } : rest;
+      }),
+    })),
+  }));
+  return JSON.stringify(cleaned, null, 2);
+}
+
 export function usePriceTagStore() {
   const stored = loadFromStorage();
-  // Use preset data if no stored data or only default placeholder
-  const initialCards = stored.length > 0 ? stored : PRESET_CARDS as CardData[];
+  const initialCards = stored ?? (PRESET_CARDS as CardData[]);
   const cards = ref<CardData[]>(initialCards);
   const activeCardIndex = ref(0);
   const selectedIds = ref<Set<string>>(loadSelected(cards.value.map(c => c.id)));
@@ -51,7 +64,7 @@ export function usePriceTagStore() {
   const viewMode = ref<'list' | 'edit'>('list');
 
   watch(cards, (val) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
+    localStorage.setItem(STORAGE_KEY, serializeCards(val));
   }, { deep: true });
 
   watch(selectedIds, (val) => {
@@ -103,6 +116,16 @@ export function usePriceTagStore() {
     }
   }
 
+  function deleteSelected() {
+    if (selectedIds.value.size === 0) return;
+    const ids = new Set(selectedIds.value);
+    cards.value = cards.value.filter(c => !ids.has(c.id));
+    selectedIds.value = new Set();
+    if (activeCardIndex.value >= cards.value.length) {
+      activeCardIndex.value = Math.max(0, cards.value.length - 1);
+    }
+  }
+
   function duplicateCard(index: number) {
     const source = cards.value[index];
     if (!source) return;
@@ -114,7 +137,7 @@ export function usePriceTagStore() {
   }
 
   function exportData() {
-    const blob = new Blob([JSON.stringify(cards.value, null, 2)], { type: 'application/json' });
+    const blob = new Blob([serializeCards(cards.value)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -126,7 +149,7 @@ export function usePriceTagStore() {
   function exportSelected() {
     const selected = cards.value.filter(c => selectedIds.value.has(c.id));
     if (selected.length === 0) return;
-    const blob = new Blob([JSON.stringify(selected, null, 2)], { type: 'application/json' });
+    const blob = new Blob([serializeCards(selected)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -202,6 +225,7 @@ export function usePriceTagStore() {
     deselectAll,
     addCard,
     deleteCard,
+    deleteSelected,
     duplicateCard,
     exportData,
     exportSelected,

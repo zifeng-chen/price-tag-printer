@@ -15,8 +15,7 @@ defineProps<{
     <div class="product-header">
       <div class="product-title">{{ card.productTitle }}</div>
       <div v-if="card.showProductImage" class="product-image-box">
-        <img v-if="card.productImageType === 'custom' && card.productImageSrc" :src="card.productImageSrc" alt="产品图片" />
-        <img v-else src="/ai.png" alt="AI元启" class="default-icon-img" />
+        <img src="/ai.png" alt="AI元启" class="default-icon-img" />
       </div>
     </div>
     <div class="feature-grid">
@@ -181,7 +180,7 @@ defineProps<{
     margin-left: -5px;
 }
 
-/* 卖点色块图标：12mm × 12mm 橙色 */
+/* 卖点色块：32.73px × 32.73px 橙色，尺寸锁死不可修改 */
 .icon {
     width: 32.73px;
     height: 32.73px;
@@ -298,10 +297,16 @@ defineProps<{
 
 /* 存在国补价时，原价弱化并加删除线 */
 .origin-price.with-subsidy {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
-    color: #999;
-    text-decoration: line-through;
+    color: #666;
+    text-decoration: line-through 1px;
+    text-decoration-thickness: 1px;
+}
+
+/* 国补价与原价之间略微拉开距离 */
+.subsidy-price + .origin-price {
+    margin-left: 1px;
 }
 
 /* ============================================================
