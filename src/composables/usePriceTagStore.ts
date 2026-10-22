@@ -135,6 +135,29 @@ export function usePriceTagStore() {
     URL.revokeObjectURL(url);
   }
 
+  function mergeCards(incoming: CardData[], selectNew = false) {
+    const existingMap = new Map(cards.value.map(c => [c.productTitle, c]));
+    const added: string[] = [];
+    for (const item of incoming) {
+      const existing = existingMap.get(item.productTitle);
+      if (existing) {
+        Object.assign(existing, item, { id: existing.id });
+      } else {
+        cards.value.push(item);
+        added.push(item.id);
+      }
+    }
+    if (selectNew && added.length) {
+      selectedIds.value = new Set([...selectedIds.value, ...added]);
+    }
+  }
+
+  function importCopyData(incoming: CardData[]): number {
+    if (!Array.isArray(incoming) || incoming.length === 0) return 0;
+    mergeCards(incoming, true);
+    return incoming.length;
+  }
+
   function importData(file: File): Promise<void> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -142,19 +165,7 @@ export function usePriceTagStore() {
         try {
           const data = JSON.parse(reader.result as string);
           if (Array.isArray(data) && data.length > 0) {
-            // Merge: update existing by productTitle, add new ones
-            const existingMap = new Map(cards.value.map(c => [c.productTitle, c]));
-            for (const item of data) {
-              const existing = existingMap.get(item.productTitle);
-              if (existing) {
-                // Overwrite existing card's content but keep its id
-                Object.assign(existing, item, { id: existing.id });
-              } else {
-                // New card
-                cards.value.push(item);
-                selectedIds.value = new Set([...selectedIds.value, item.id]);
-              }
-            }
+            mergeCards(data, true);
             resolve();
           } else {
             reject(new Error('无效的数据格式'));
@@ -195,6 +206,7 @@ export function usePriceTagStore() {
     exportData,
     exportSelected,
     importData,
+    importCopyData,
     getTotalColorRows,
     checkAndSyncAccessory,
   };

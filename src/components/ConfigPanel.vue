@@ -5,6 +5,8 @@ import type { CardData } from '../types';
 import { useAccessoryStore } from '../accessory-data';
 import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
+import { BUILTIN_ICONS, ICON_CATEGORIES } from '../icon-library';
+import type { FeatureItem } from '../types';
 
 const accessoryStore = useAccessoryStore();
 const serviceStore = useServiceStore();
@@ -226,10 +228,21 @@ function uploadFeatureImage(idx: number, event: Event) {
   reader.readAsDataURL(file);
 }
 
+function onIconTypeChange(feature: FeatureItem) {
+  feature.iconSrc = '';
+  if (feature.iconType === 'builtin' && !feature.iconName) {
+    feature.iconName = BUILTIN_ICONS[0].name;
+  }
+}
+
+function iconsByCategory(category: string) {
+  return BUILTIN_ICONS.filter(i => i.category === category);
+}
+
 function addFeature() {
   const card = currentCard.value;
   if (!card || card.features.length >= MAX_FEATURES) return;
-  card.features.push({ title: '', desc: '', iconType: 'default', iconSrc: '', iconSize: 70 });
+  card.features.push({ title: '', desc: '', iconType: 'builtin', iconName: BUILTIN_ICONS[0].name, iconSrc: '', iconSize: 70 });
   featureCollapsed.value.push(false);
 }
 
@@ -323,11 +336,37 @@ function deleteFeature(index: number) {
                   </div>
                   <div class="form-group">
                     <label>图标</label>
-                    <select v-model="feature.iconType" @change="feature.iconSrc = ''">
+                    <select v-model="feature.iconType" @change="onIconTypeChange(feature)">
                       <option value="default">默认色块</option>
+                      <option value="builtin">内置图标</option>
                       <option value="image">上传图片</option>
                       <option value="svg">粘贴SVG代码</option>
                     </select>
+                  </div>
+                  <div v-if="feature.iconType === 'builtin'" class="form-group">
+                    <div class="builtin-icon-picker">
+                      <div v-for="cat in ICON_CATEGORIES" :key="cat" class="builtin-icon-group">
+                        <div class="builtin-icon-cat">{{ cat }}</div>
+                        <div class="builtin-icon-grid">
+                          <button
+                            v-for="icon in iconsByCategory(cat)"
+                            :key="icon.name"
+                            type="button"
+                            class="builtin-icon-item"
+                            :class="{ active: feature.iconName === icon.name }"
+                            :title="icon.name"
+                            @click="feature.iconName = icon.name"
+                          >
+                            <img :src="icon.src" :alt="icon.name" />
+                            <span>{{ icon.name }}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="icon-size-inline" style="margin-top:6px;">
+                      <label>大小（%）</label>
+                      <input type="number" v-model.number="feature.iconSize" min="1" max="100" step="1" />
+                    </div>
                   </div>
                   <div v-if="feature.iconType === 'image'" class="form-group icon-row">
                     <button class="btn-upload-icon" @click="triggerFeatureImageUpload(idx)">选择图片</button>
@@ -956,6 +995,70 @@ function deleteFeature(index: number) {
 }
 
 .icon-size-inline input:focus { border-color: #FF6A00; }
+
+.builtin-icon-picker {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.builtin-icon-group + .builtin-icon-group { margin-top: 10px; }
+
+.builtin-icon-cat {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.builtin-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 6px;
+}
+
+.builtin-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.builtin-icon-item:hover { border-color: #FF6A00; }
+
+.builtin-icon-item.active {
+  border-color: #FF6A00;
+  background: #FFF3E8;
+  box-shadow: 0 0 0 1px #FF6A00 inset;
+}
+
+.builtin-icon-item img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.builtin-icon-item span {
+  font-size: 10px;
+  color: #666;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.builtin-icon-item.active span { color: #FF6A00; }
 
 .btn-manage-link {
   margin-left: auto;

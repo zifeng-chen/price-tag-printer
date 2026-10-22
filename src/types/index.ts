@@ -11,7 +11,8 @@ export interface ProductItem {
 export interface FeatureItem {
   title: string;
   desc: string;
-  iconType: 'default' | 'image' | 'svg';
+  iconType: 'default' | 'image' | 'svg' | 'builtin';
+  iconName: string; // builtin icon name from icon-library
   iconSrc: string;
   iconSize: number; // 1-100, percentage of color block size
 }
@@ -49,10 +50,10 @@ export function createDefaultCard(): CardData {
     productImageType: 'default',
     productImageSrc: '',
     features: [
-      { title: '紧凑机身 便携大屏', desc: '15英寸 轻至1.69kg', iconType: 'default', iconSrc: '', iconSize: 70 },
-      { title: '联想天禧AI智能体', desc: '系统级智能交互', iconType: 'default', iconSrc: '', iconSize: 70 },
-      { title: '灵境引擎 散热优化', desc: '性能释放更强', iconType: 'default', iconSrc: '', iconSize: 70 },
-      { title: '全域妙写数位板', desc: 'Wacom认证', iconType: 'default', iconSrc: '', iconSize: 70 },
+      { title: '紧凑机身 便携大屏', desc: '15英寸 轻至1.69kg', iconType: 'builtin', iconName: '屏幕', iconSrc: '', iconSize: 70 },
+      { title: '联想天禧AI智能体', desc: '系统级智能交互', iconType: 'builtin', iconName: '智能体', iconSrc: '', iconSize: 70 },
+      { title: '灵境引擎 散热优化', desc: '性能释放更强', iconType: 'builtin', iconName: '静音散热', iconSrc: '', iconSize: 70 },
+      { title: '全域妙写数位板', desc: 'Wacom认证', iconType: 'builtin', iconName: '数位板', iconSrc: '', iconSize: 70 },
     ],
     products: [
       {

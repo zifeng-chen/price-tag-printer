@@ -6,6 +6,7 @@ import ConfigPanel from './components/ConfigPanel.vue';
 import PreviewPanel from './components/PreviewPanel.vue';
 import PriceTagCard from './components/PriceTagCard.vue';
 import type { CardData } from './types';
+import { COPY_CARDS } from './copy-data';
 
 const store = usePriceTagStore();
 
@@ -74,6 +75,15 @@ function confirmDuplicate(index: number) {
     onOk: () => store.duplicateCard(index),
   });
 }
+
+function handleImportCopy() {
+  const blank: CardData[] = JSON.parse(JSON.stringify(COPY_CARDS));
+  const n = store.importCopyData(blank);
+  Modal.info({
+    title: '导入内置文案',
+    content: `已导入 ${n} 张展牌文案（同名展牌内容已覆盖，保留原有勾选状态）。`,
+  });
+}
 </script>
 
 <template>
@@ -125,6 +135,9 @@ function confirmDuplicate(index: number) {
             <Upload action="" :before-upload="(file: File) => { store.importData(file); return false; }" accept=".json" class="full-upload">
               <Button size="small" long>导入数据</Button>
             </Upload>
+          </div>
+          <div class="footer-row import-row">
+            <Button size="small" long icon="md-albums" @click="handleImportCopy">导入内置文案</Button>
           </div>
           <Button type="warning" long :disabled="selectedIds.size === 0" @click="handlePrintSelected">
             🖨️ 打印选中（{{ selectedIds.size }}）
