@@ -8,7 +8,7 @@ import PriceTagCard from './components/PriceTagCard.vue';
 import type { CardData } from './types';
 import { DEFAULT_CATEGORY } from './types';
 import { COPY_CARDS } from './copy-data';
-import { subsidyConfig, resetSubsidyConfig } from './subsidy';
+import { subsidyConfig, applySubsidyConfig, DEFAULT_SUBSIDY_CONFIG, type SubsidyConfig } from './subsidy';
 
 const store = usePriceTagStore();
 
@@ -131,16 +131,40 @@ function handleImportCopy() {
 
 // ===== 设置弹窗 =====
 const settingsVisible = ref(false);
+// 草稿配置：弹窗内编辑，点保存并二次确认后才生效
+const subsidyDraft = ref<SubsidyConfig>(JSON.parse(JSON.stringify(subsidyConfig.value)));
 
 function openSettings() {
+  subsidyDraft.value = JSON.parse(JSON.stringify(subsidyConfig.value));
   settingsVisible.value = true;
 }
 
-function handleResetSubsidy() {
+function handleSaveSubsidy() {
+  const d = subsidyDraft.value;
   Modal.confirm({
-    title: '恢复默认',
-    content: '确定将补贴规则恢复为默认值（电脑 15% / 封顶 1500，移动 15% / 封顶 500）吗？',
-    onOk: () => resetSubsidyConfig(),
+    title: '保存确认',
+    content: `即将保存国补规则：电脑 ${d.computer.rate}% / 封顶 ${d.computer.cap} 元；移动 ${d.mobile.rate}% / 封顶 ${d.mobile.cap} 元。保存后新输入的国补价将按此规则计算。是否继续？`,
+    okText: '确认保存',
+    onOk: () => {
+      applySubsidyConfig(d);
+      Modal.info({ title: '已保存', content: '国补规则已更新。如需将新规则应用到已有展牌，请点击「按新规则重算」。' });
+    },
+  });
+}
+
+function handleResetSubsidy() {
+  subsidyDraft.value = JSON.parse(JSON.stringify(DEFAULT_SUBSIDY_CONFIG));
+}
+
+function handleRecalcSubsidy() {
+  Modal.confirm({
+    title: '重算确认',
+    content: '将按「已保存」的国补规则，重算所有展牌的国补价，并覆盖现有国补价（含手动修改过的值）。此操作不可撤销，是否继续？',
+    okText: '确认重算',
+    onOk: () => {
+      const n = store.recalcAllSubsidy();
+      Modal.info({ title: '重算完成', content: `已更新 ${n} 张展牌的国补价。` });
+    },
   });
 }
 
@@ -237,16 +261,16 @@ function handleImportData(file: File) {
     <Modal v-model="settingsVisible" title="设置" :footer-hide="true" :width="520">
       <div class="settings-section">
         <div class="settings-title">国补规则</div>
-        <div class="settings-tip">补贴 = 原价 × 百分比，超过封顶则按封顶计算；国补价 = 原价 − 补贴</div>
+        <div class="settings-tip">补贴 = 原价 × 百分比，超过封顶则按封顶计算；国补价 = 原价 − 补贴。修改后需点「保存」并确认才生效。</div>
         <div class="rule-block">
           <div class="rule-name">电脑（笔记本 / 台式机）</div>
           <div class="rule-inputs">
             <label>百分比</label>
-            <InputNumber :min="0" :max="100" v-model="subsidyConfig.computer.rate" :step="1" style="width:110px">
+            <InputNumber :min="0" :max="100" v-model="subsidyDraft.computer.rate" :step="1" style="width:110px">
               <template #append>%</template>
             </InputNumber>
             <label>封顶</label>
-            <InputNumber :min="0" v-model="subsidyConfig.computer.cap" :step="100" style="width:130px">
+            <InputNumber :min="0" v-model="subsidyDraft.computer.cap" :step="100" style="width:130px">
               <template #append>元</template>
             </InputNumber>
           </div>
@@ -255,16 +279,20 @@ function handleImportData(file: File) {
           <div class="rule-name">移动（手机 / 平板）</div>
           <div class="rule-inputs">
             <label>百分比</label>
-            <InputNumber :min="0" :max="100" v-model="subsidyConfig.mobile.rate" :step="1" style="width:110px">
+            <InputNumber :min="0" :max="100" v-model="subsidyDraft.mobile.rate" :step="1" style="width:110px">
               <template #append>%</template>
             </InputNumber>
             <label>封顶</label>
-            <InputNumber :min="0" v-model="subsidyConfig.mobile.cap" :step="100" style="width:130px">
+            <InputNumber :min="0" v-model="subsidyDraft.mobile.cap" :step="100" style="width:130px">
               <template #append>元</template>
             </InputNumber>
           </div>
         </div>
-        <Button size="small" @click="handleResetSubsidy">恢复默认</Button>
+        <div class="rule-actions">
+          <Button size="small" @click="handleResetSubsidy">恢复默认</Button>
+          <Button size="small" type="primary" icon="md-checkmark" @click="handleSaveSubsidy">保存</Button>
+          <Button size="small" type="warning" icon="md-refresh" @click="handleRecalcSubsidy">按新规则重算</Button>
+        </div>
       </div>
 
       <div class="settings-section">
@@ -391,6 +419,12 @@ body {
 .rule-inputs label {
   font-size: 12px;
   color: #888;
+}
+
+.rule-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .settings-btns {

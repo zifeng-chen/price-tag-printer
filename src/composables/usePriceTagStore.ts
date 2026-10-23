@@ -2,6 +2,7 @@ import { ref, watch, computed } from 'vue';
 import type { CardData } from '../types';
 import { createDefaultCard, generateId, CATEGORIES, DEFAULT_CATEGORY } from '../types';
 import { PRESET_CARDS } from '../preset-data';
+import { calcSubsidyPrice } from '../subsidy';
 
 const STORAGE_KEY = 'price-tag-printer-data';
 const SELECTED_KEY = 'price-tag-printer-selected';
@@ -231,6 +232,26 @@ export function usePriceTagStore() {
     return total;
   }
 
+  // 按当前生效的国补规则重算所有展牌的国补价，返回被更新的展牌数
+  function recalcAllSubsidy(): number {
+    let changed = 0;
+    cards.value.forEach(card => {
+      let touched = false;
+      card.products.forEach(p => {
+        p.colors.forEach(color => {
+          const next = calcSubsidyPrice(color.price, card.category);
+          if (next === null) return; // 无规则/价格非法：跳过，保持原值
+          if (color.subsidyPrice !== next) {
+            color.subsidyPrice = next;
+            touched = true;
+          }
+        });
+      });
+      if (touched) changed++;
+    });
+    return changed;
+  }
+
   function checkAndSyncAccessory(card: CardData) {
     card.showAccessory = getTotalColorRows(card) <= 5;
   }
@@ -257,5 +278,6 @@ export function usePriceTagStore() {
     importCopyData,
     getTotalColorRows,
     checkAndSyncAccessory,
+    recalcAllSubsidy,
   };
 }

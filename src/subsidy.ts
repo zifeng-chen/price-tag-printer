@@ -12,25 +12,32 @@ export interface SubsidyConfig {
 
 const CONFIG_KEY = 'price-tag-subsidy-config';
 
-const DEFAULT_CONFIG: SubsidyConfig = {
+export const DEFAULT_SUBSIDY_CONFIG: SubsidyConfig = {
   computer: { rate: 15, cap: 1500 },
   mobile: { rate: 15, cap: 500 },
 };
 
+function clone(cfg: SubsidyConfig): SubsidyConfig {
+  return JSON.parse(JSON.stringify(cfg));
+}
+
+function normalize(obj: unknown): SubsidyConfig {
+  const o = (obj || {}) as Partial<SubsidyConfig>;
+  return {
+    computer: { ...DEFAULT_SUBSIDY_CONFIG.computer, ...(o.computer || {}) },
+    mobile: { ...DEFAULT_SUBSIDY_CONFIG.mobile, ...(o.mobile || {}) },
+  };
+}
+
 function loadConfig(): SubsidyConfig {
   try {
     const raw = localStorage.getItem(CONFIG_KEY);
-    if (raw) {
-      const obj = JSON.parse(raw);
-      return {
-        computer: { ...DEFAULT_CONFIG.computer, ...(obj.computer || {}) },
-        mobile: { ...DEFAULT_CONFIG.mobile, ...(obj.mobile || {}) },
-      };
-    }
+    if (raw) return normalize(JSON.parse(raw));
   } catch { /* ignore */ }
-  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  return clone(DEFAULT_SUBSIDY_CONFIG);
 }
 
+// 已生效的配置（持久化）
 export const subsidyConfig = ref<SubsidyConfig>(loadConfig());
 
 watch(subsidyConfig, val => {
@@ -39,26 +46,32 @@ watch(subsidyConfig, val => {
   } catch { /* ignore */ }
 }, { deep: true });
 
-export function resetSubsidyConfig() {
-  subsidyConfig.value = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+// 显式应用新配置（保存按钮确认后调用）
+export function applySubsidyConfig(cfg: SubsidyConfig) {
+  subsidyConfig.value = normalize(cfg);
 }
 
-// 分类归入哪一档：笔记本/台式机 -> 电脑；手机/平板 -> 移动
-function ruleOf(category?: string): SubsidyRule | null {
-  if (category === '笔记本' || category === '台式机') return subsidyConfig.value.computer;
-  if (category === '手机' || category === '平板') return subsidyConfig.value.mobile;
-  return null;
-}
-
-export function hasSubsidyRule(category?: string): boolean {
-  return !!ruleOf(category);
-}
-
-// 返回国补后价格；无规则或价格非法时返回 null（不自动计算）
-export function calcSubsidyPrice(price: number, category?: string): number | null {
-  const rule = ruleOf(category);
+// 按指定配置计算国补价（用于保存前的预览/重算，不影响已生效配置）
+export function calcSubsidyPriceWith(price: number, category: string | undefined, cfg: SubsidyConfig): number | null {
+  const rule = ruleOf(category, cfg);
   if (!rule) return null;
   if (!Number.isFinite(price) || price <= 0) return null;
   const subsidy = Math.min(price * (rule.rate / 100), rule.cap);
   return Math.round((price - subsidy) * 10000) / 10000;
+}
+
+// 分类归入哪一档：笔记本/台式机 -> 电脑；手机/平板 -> 移动
+function ruleOf(category: string | undefined, cfg: SubsidyConfig): SubsidyRule | null {
+  if (category === '笔记本' || category === '台式机') return cfg.computer;
+  if (category === '手机' || category === '平板') return cfg.mobile;
+  return null;
+}
+
+export function hasSubsidyRule(category?: string): boolean {
+  return !!ruleOf(category, subsidyConfig.value);
+}
+
+// 按已生效配置计算国补价；无规则或价格非法时返回 null（不自动计算）
+export function calcSubsidyPrice(price: number, category?: string): number | null {
+  return calcSubsidyPriceWith(price, category, subsidyConfig.value);
 }
