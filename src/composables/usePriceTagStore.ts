@@ -6,7 +6,7 @@ import { PRESET_CARDS } from '../preset-data';
 const STORAGE_KEY = 'price-tag-printer-data';
 const SELECTED_KEY = 'price-tag-printer-selected';
 const VERSION_KEY = 'price-tag-printer-version';
-const CURRENT_VERSION = '6';
+const CURRENT_VERSION = '7';
 
 // 兼容旧数据 / 导入数据：无 category 或非法值统一归入默认分类
 function normalizeCards(list: CardData[]): CardData[] {
