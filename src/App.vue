@@ -8,6 +8,7 @@ import PriceTagCard from './components/PriceTagCard.vue';
 import type { CardData } from './types';
 import { DEFAULT_CATEGORY } from './types';
 import { COPY_CARDS } from './copy-data';
+import { subsidyConfig, resetSubsidyConfig } from './subsidy';
 
 const store = usePriceTagStore();
 
@@ -127,6 +128,26 @@ function handleImportCopy() {
     content: `已导入 ${n} 张展牌文案（同名展牌内容已覆盖，保留原有勾选状态）。`,
   });
 }
+
+// ===== 设置弹窗 =====
+const settingsVisible = ref(false);
+
+function openSettings() {
+  settingsVisible.value = true;
+}
+
+function handleResetSubsidy() {
+  Modal.confirm({
+    title: '恢复默认',
+    content: '确定将补贴规则恢复为默认值（电脑 15% / 封顶 1500，移动 15% / 封顶 500）吗？',
+    onOk: () => resetSubsidyConfig(),
+  });
+}
+
+function handleImportData(file: File) {
+  store.importData(file);
+  return false;
+}
 </script>
 
 <template>
@@ -136,6 +157,7 @@ function handleImportCopy() {
       <aside class="list-sidebar">
         <div class="sidebar-header">
           <h1>展牌管理</h1>
+          <Button class="settings-btn" size="small" icon="md-settings" @click="openSettings">设置</Button>
         </div>
 
         <div class="sidebar-search">
@@ -196,18 +218,6 @@ function handleImportCopy() {
               删除选中（{{ selectedIds.size }}）
             </Button>
           </div>
-          <div class="footer-row">
-            <Button size="small" @click="store.exportSelected()" style="flex:1">导出选中</Button>
-            <Button size="small" @click="store.exportData()" style="flex:1">导出全部</Button>
-          </div>
-          <div class="footer-row import-row">
-            <Upload action="" :before-upload="(file: File) => { store.importData(file); return false; }" accept=".json" class="full-upload">
-              <Button size="small" long>导入数据</Button>
-            </Upload>
-          </div>
-          <div class="footer-row import-row">
-            <Button size="small" long icon="md-albums" @click="handleImportCopy">导入内置文案</Button>
-          </div>
           <Button type="warning" long :disabled="selectedIds.size === 0" @click="handlePrintSelected">
             🖨️ 打印选中（{{ selectedIds.size }}）
           </Button>
@@ -222,6 +232,53 @@ function handleImportCopy() {
         <PreviewPanel :cards="previewCards" :active-card-id="activeCardId" @delete-card="handleDeleteById($event)" />
       </div>
     </div>
+
+    <!-- 设置弹窗 -->
+    <Modal v-model="settingsVisible" title="设置" :footer-hide="true" :width="520">
+      <div class="settings-section">
+        <div class="settings-title">国补规则</div>
+        <div class="settings-tip">补贴 = 原价 × 百分比，超过封顶则按封顶计算；国补价 = 原价 − 补贴</div>
+        <div class="rule-block">
+          <div class="rule-name">电脑（笔记本 / 台式机）</div>
+          <div class="rule-inputs">
+            <label>百分比</label>
+            <InputNumber :min="0" :max="100" v-model="subsidyConfig.computer.rate" :step="1" style="width:110px">
+              <template #append>%</template>
+            </InputNumber>
+            <label>封顶</label>
+            <InputNumber :min="0" v-model="subsidyConfig.computer.cap" :step="100" style="width:130px">
+              <template #append>元</template>
+            </InputNumber>
+          </div>
+        </div>
+        <div class="rule-block">
+          <div class="rule-name">移动（手机 / 平板）</div>
+          <div class="rule-inputs">
+            <label>百分比</label>
+            <InputNumber :min="0" :max="100" v-model="subsidyConfig.mobile.rate" :step="1" style="width:110px">
+              <template #append>%</template>
+            </InputNumber>
+            <label>封顶</label>
+            <InputNumber :min="0" v-model="subsidyConfig.mobile.cap" :step="100" style="width:130px">
+              <template #append>元</template>
+            </InputNumber>
+          </div>
+        </div>
+        <Button size="small" @click="handleResetSubsidy">恢复默认</Button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">数据管理</div>
+        <div class="settings-btns">
+          <Button size="small" :disabled="selectedIds.size === 0" @click="store.exportSelected()">导出选中</Button>
+          <Button size="small" @click="store.exportData()">导出全部</Button>
+          <Upload action="" :before-upload="handleImportData" accept=".json" class="inline-upload">
+            <Button size="small">导入数据</Button>
+          </Upload>
+          <Button size="small" icon="md-albums" @click="handleImportCopy">导入内置文案</Button>
+        </div>
+      </div>
+    </Modal>
 
     <!-- Print-only -->
     <div class="print-only">
@@ -268,11 +325,82 @@ body {
   background: linear-gradient(135deg, #FF6A00, #ff9a44);
   color: #fff;
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .sidebar-header h1 {
   font-size: 15px;
   font-weight: 700;
+}
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.32) !important;
+}
+
+.settings-section {
+  padding: 12px 0;
+}
+
+.settings-section + .settings-section {
+  border-top: 1px solid #f0f0f0;
+}
+
+.settings-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.settings-tip {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.rule-block {
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.rule-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.rule-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rule-inputs label {
+  font-size: 12px;
+  color: #888;
+}
+
+.settings-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inline-upload {
+  display: inline-block;
 }
 
 .sidebar-search {
@@ -380,9 +508,6 @@ body {
 }
 
 .footer-row { display: flex; gap: 6px; align-items: center; }
-.import-row { display: block; }
-.full-upload { width: 100%; }
-.full-upload :deep(.ivu-upload) { width: 100%; }
 .danger-btn:hover .ivu-icon { color: #ff4d4f !important; }
 
 /* ===== Preview ===== */
