@@ -38,15 +38,18 @@ function loadFromStorage(): CardData[] | null {
   return null;
 }
 
-function loadSelected(ids: string[]): Set<string> {
+function loadSelected(allIds: string[]): Set<string> {
   try {
     const raw = localStorage.getItem(SELECTED_KEY);
     if (raw) {
       const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) return new Set(arr);
+      // 旧版本会默认全选，若缓存里恰好是全选则视为未选择，不再默认勾选
+      if (Array.isArray(arr) && !(arr.length > 0 && arr.length === allIds.length)) {
+        return new Set(arr);
+      }
     }
   } catch { /* ignore */ }
-  return new Set(ids);
+  return new Set();
 }
 
 // 序列化时清理国补价 0：未填写则不留字段
