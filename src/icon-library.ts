@@ -42,6 +42,28 @@ export const BUILTIN_ICONS_BY_CATEGORY: Record<string, BuiltinIcon[]> = {
 
   { name: '品质保障', src: '/icons/i18_品质保障.png', category: '服务' },
   { name: '售后无忧', src: '/icons/i26_售后无忧.png', category: '服务' },
+    { name: '外观设计', src: '/icons/i1_外观设计.png', category: '外观设计' },
+    { name: '接口', src: '/icons/i3_接口.png', category: '接口扩展' },
+    { name: '外观LOGO', src: '/icons/i5_外观LOGO.png', category: '外观设计' },
+    { name: '轻薄', src: '/icons/i6_轻薄.png', category: '外观设计' },
+    { name: '性能', src: '/icons/i7_性能.png', category: '性能' },
+    { name: '充电', src: '/icons/i8_充电.png', category: '续航充电' },
+    { name: '设计', src: '/icons/i9_设计.png', category: '外观设计' },
+    { name: '散热', src: '/icons/i10_散热.png', category: '散热' },
+    { name: '翻转', src: '/icons/i11_翻转.png', category: '外观设计' },
+    { name: '续航', src: '/icons/i12_续航.png', category: '续航充电' },
+    { name: '铰链', src: '/icons/i13_铰链.png', category: '外观设计' },
+    { name: '触控屏', src: '/icons/i14_触控屏.png', category: '显示' },
+    { name: '双屏', src: '/icons/i15_双屏.png', category: '显示' },
+    { name: '双屏-2', src: '/icons/i16_双屏-2.png', category: '显示' },
+    { name: '双屏-3', src: '/icons/i17_双屏-3.png', category: '显示' },
+    { name: '全面屏', src: '/icons/i18_全面屏.png', category: '显示' },
+    { name: '摄像头', src: '/icons/i19_摄像头.png', category: '其他' },
+    { name: '外观工艺', src: '/icons/i20_外观工艺.png', category: '外观设计' },
+    { name: '小新屏', src: '/icons/i21_小新屏.png', category: '显示' },
+    { name: '扩展', src: '/icons/i22_扩展.png', category: '接口扩展' },
+    { name: '轻薄便携', src: '/icons/i23_轻薄便携.png', category: '外观设计' },
+    { name: '性能-2', src: '/icons/i24_性能-2.png', category: '性能' },
   ],
   '手机': [
   { name: '智能体', src: '/icons/i0_智能体.png', category: 'AI智能' },
@@ -211,25 +233,6 @@ export function getBuiltinIconSrc(name: string, category?: string): string {
 
 // 图标关联文案：选中内置图标后可选用的候选文案（标题 / 副标题）
 export const ICON_COPY_MAP: Record<string, { title: string; desc: string }[]> = {
-  '智能体': [
-    { title: '联想天禧个人超级智能体', desc: '系统级伴随交互 随时AI随时问' },
-    { title: '联想天禧个人超级智能体', desc: '专属游戏超能搭档' },
-    { title: '性能 AI 双在线', desc: '3.4克拉钻石铜散热系统及天禧4.0' },
-    { title: '性能 AI 双在线', desc: '酷睿Ultra处理器及天禧4.0' },
-  ],
-  '屏幕': [
-    { title: '紧凑机身 便携大屏 超轻重量', desc: '15英寸机身 轻至1.69kg' },
-    { title: '超高亮双层OLED专业超感屏', desc: '逐屏逐色域专业校色 潘通双认证' },
-    { title: '高分高刷 1100尼特高亮屏', desc: '色域100%全覆盖设计师首选' },
-    { title: '1100尼特星耀舒视屏', desc: '色彩准,屏幕大,久看不累' },
-    { title: '1100尼特星耀舒视屏', desc: '小巧便携,色彩精准,久看不累' },
-    { title: '高分高刷专业超竞屏', desc: '0.08ms响应/1100nits超高亮度' },
-    { title: '专业超竞屏OLED', desc: '游戏无拖影强大广色域' },
-    { title: '旗舰 OLED 专业屏', desc: '2.8K/120Hz/1100 尼特' },
-    { title: '14 英寸高分高刷高亮度广色域屏', desc: '2.8K 120Hz 1100nits护眼认证' },
-    { title: '16英寸高分高刷IPS屏', desc: '全DC调光无频闪' },
-    { title: '16:10黄金比例臻彩屏', desc: 'DC调光+高色域,色彩鲜活清晰' },
-  ],
   '静音散热': [
     { title: '灵境引擎 乾坤散热', desc: '100+软件调优 游戏同源散热' },
     { title: '独特极简底面设计', desc: '运行安静防尘优秀' },
@@ -251,10 +254,6 @@ export const ICON_COPY_MAP: Record<string, { title: string; desc: string }[]> = 
   ],
   '内存扩展': [
     { title: '双内存插槽扩展', desc: '全能扩展,大内存,大存储' },
-  ],
-  '处理器': [
-    { title: '旗舰处理器,可选RTX 5070显卡', desc: '乾坤Pro散热架构 6400满速内存' },
-    { title: '轻薄高颜值 X基因', desc: '便携的桌面级性能' },
   ],
   '拯救者外观': [
     { title: '经典大Y LOGO外观', desc: '四扬声器立体声 快充生态' },
@@ -316,6 +315,150 @@ export const ICON_COPY_MAP: Record<string, { title: string; desc: string }[]> = 
   ],
   '售后无忧': [
     { title: '联想售后保障', desc: '全国 4400＋服务点' },
+  ],
+  '处理器': [
+    { title: '旗舰处理器,可选RTX 5070显卡', desc: '乾坤Pro散热架构 6400满速内存' },
+    { title: '轻薄高颜值 X基因', desc: '便携的桌面级性能' },
+    { title: '可选旗舰R9-9955HX3D及RTX5080显卡', desc: '至高超强275W性能释放' },
+    { title: '旗舰处理器，可选RTX 5090显卡', desc: '至高超强275W性能释放' },
+    { title: '旗舰处理器，可选RTX 5070显卡', desc: '乾坤Pro散热架构 6400满速内存' },
+    { title: '桌面级处理器，可选RTX 5070显卡', desc: '乾坤Pro散热架构 215W性能释放' },
+    { title: 'Ultra 7处理器,AI专属芯片', desc: '锐炫ARC核显更强图像性能' },
+    { title: '高通骁龙X Elite平台', desc: '强悍性能，更低功耗，45 TOPS NPU算力' },
+    { title: '英特尔第二代酷睿Ultra处理器', desc: '更强性能,整机115 Tops超强AI算力 50%整体功耗降低' },
+    { title: 'Ultra 9处理器强悍创作性能', desc: 'RTX 4060独显版本强劲创作力' },
+    { title: '酷睿Ultra 7处理器', desc: 'AI办公创作轻松玩转' }
+  ],
+  '外观设计': [
+    { title: '全新动感科幻外观设计', desc: 'AD金属外壳,机身升级氛围光效' }
+  ],
+  '智能体': [
+    { title: '联想天禧个人超级智能体', desc: '系统级伴随交互 随时AI随时问' },
+    { title: '联想天禧个人超级智能体', desc: '专属游戏超能搭档' },
+    { title: '性能 AI 双在线', desc: '3.4克拉钻石铜散热系统及天禧4.0' },
+    { title: '性能 AI 双在线', desc: '酷睿Ultra处理器及天禧4.0' },
+    { title: '内置AI智能体小天', desc: '随时随地，一问便知' },
+    { title: '内置AI智能体小天', desc: '随时随地一问便知' }
+  ],
+  '接口': [
+    { title: '全速扩展领先一代满贯接口', desc: '5600高速内存PCIe5.0超高速SSD' },
+    { title: '6400满速内存 雷电4接口', desc: '快充生态 超级互联生态' },
+    { title: '真全速大满贯接口 充电快', desc: '80Wh大电池,标配100W快充' },
+    { title: '真全速大满贯接口 充电快', desc: '60Wh大电池,标配100W快充' },
+    { title: '真全速大满贯接口 充电快', desc: '84Wh大电池,支持140W快充' },
+    { title: '大满贯接口,极速传输', desc: '大文件随便传,上网速度快' }
+  ],
+  '屏幕': [
+    { title: '紧凑机身 便携大屏 超轻重量', desc: '15英寸机身 轻至1.69kg' },
+    { title: '超高亮双层OLED专业超感屏', desc: '逐屏逐色域专业校色 潘通双认证' },
+    { title: '高分高刷 1100尼特高亮屏', desc: '色域100%全覆盖设计师首选' },
+    { title: '1100尼特星耀舒视屏', desc: '色彩准,屏幕大,久看不累' },
+    { title: '1100尼特星耀舒视屏', desc: '小巧便携,色彩精准,久看不累' },
+    { title: '高分高刷专业超竞屏', desc: '0.08ms响应/1100nits超高亮度' },
+    { title: '专业超竞屏OLED', desc: '游戏无拖影强大广色域' },
+    { title: '旗舰 OLED 专业屏', desc: '2.8K/120Hz/1100 尼特' },
+    { title: '14 英寸高分高刷高亮度广色域屏', desc: '2.8K 120Hz 1100nits护眼认证' },
+    { title: '16英寸高分高刷IPS屏', desc: '全DC调光无频闪' },
+    { title: '16:10黄金比例臻彩屏', desc: 'DC调光+高色域,色彩鲜活清晰' },
+    { title: '0.08ms响应高分高刷专业超竞屏', desc: '1100nits超高亮度' },
+    { title: '3ms响应高分高刷专业超竞屏', desc: 'P3广色域覆盖10bit色深' },
+    { title: '专业OLED 高分高刷屏', desc: '1100nits超高亮度' },
+    { title: '高分高刷专业超竞屏', desc: '3ms响应时间 P3广色域覆盖' },
+    { title: '高分高刷高屏占比屏幕', desc: '3ms响应时间 窄边框屏幕' },
+    { title: '可选双层OLED原色好屏', desc: '1600尼特超高亮 专业色域色准' },
+    { title: '15.3英寸专业超感屏', desc: '100% DCI-P3专业色域(典型值) ΔE<1,DC调光,十点触控' },
+    { title: 'PURESIGHT Pro专业超感屏', desc: '100% DCI-P3/sRGB双色域, 硬件级校准,双色域ΔE<1' },
+    { title: '3.2K分辨率专业超感屏', desc: '硬件级校准,双色域ΔE<1' },
+    { title: '高分高刷 1100尼特高亮屏', desc: '色域100%全覆盖超感屏' },
+    { title: '高分高刷 1100尼特高亮屏', desc: '100%色域专业色准 专业超感屏' }
+  ],
+  '外观LOGO': [
+    { title: '经典大Y LOGO外观', desc: '四扬声器立体声 快充生态' }
+  ],
+  '轻薄': [
+    { title: '电泳工艺冰魄白配色', desc: '170W双满功耗性能释放' },
+    { title: '轻盈智美', desc: '轻薄产品设计' },
+    { title: '丝绸铝纤薄机身', desc: '凌云镁合金架构轻盈坚固，轻约1.29kg，至薄约3.5mm' },
+    { title: '业内最小的14英寸本', desc: '小机身大屏幕1.25kg轻薄机身' },
+    { title: '皮质雅韵 轻奢气场', desc: '柔肤纳米皮,轻约1.3kg' }
+  ],
+  '性能': [
+    { title: '至高200w性能释放 二代乾坤散热', desc: '桌面级大核处理器 可选RTX 5070显卡' },
+    { title: '至高170w性能释放 二代乾坤散热', desc: '桌面级大核处理器 可选RTX 5060显卡' },
+    { title: '灵境引擎 自研AI Core', desc: '100+专业软件调优' },
+    { title: '强悍创作性能', desc: '英特尔Ultra 9处理器 可选RTX 4060独显版本,强劲创作力' },
+    { title: '强悍创作性能', desc: 'AMD AI 9处理器 可选RTX 4060独显版本,强劲创作力' },
+    { title: '性能澎湃 效率翻倍', desc: '第二代酷睿Ultra7处理器' },
+    { title: '同价位翻转本中更强性能', desc: '第二代酷睿Ultra 7处理器' },
+    { title: '强性能好释放', desc: '轻薄游戏神U' },
+    { title: '性能更强,火力全开', desc: '新一代强芯,创意永不枯竭' }
+  ],
+  '充电': [
+    { title: '专属适配140W C口充电', desc: '减少旅行重量出行 轻量化打游戏' }
+  ],
+  '设计': [
+    { title: '动感科幻居中LEGION设计', desc: '超跑出风口设计' },
+    { title: 'PURESUITE悦己体验', desc: '1.5mm长键程韵律键盘, 沉浸高低音分频四扬,齐全高速接口' },
+    { title: '1.5mm长键程韵律键盘', desc: '沉浸高低音分频四扬声器' }
+  ],
+  '散热': [
+    { title: '旗舰性能，乾坤散热', desc: '115W满功耗5070显卡' }
+  ],
+  '翻转': [
+    { title: '360度旋转，可触可写', desc: '四大翻转模式 多场景使用' },
+    { title: '360°翻转,随心变换', desc: '四大模式配备全新灵感妙笔' },
+    { title: '360度旋转,可触可写', desc: '四大翻转模式 多场景使用' }
+  ],
+  '续航': [
+    { title: '约19小时娱乐续航', desc: '71Wh大容量电池65W快充' },
+    { title: '全天候动力', desc: '约24小时本地视频续航' },
+    { title: '全天动力，超长续航', desc: '约13小时模拟办公续航，约24小时本地视频播放' },
+    { title: '约27小时娱乐续航', desc: '约11小时办公续航' },
+    { title: '约26小时单机视频播放', desc: '约9小时办公续航' },
+    { title: '大电池长续航', desc: '真实续航模拟测试约10小时' }
+  ],
+  '铰链': [
+    { title: '新一代天工铰链', desc: '超聚合一体天线350米稳定链接' },
+    { title: '新一代天工铰链360°悬停', desc: '多场景形态,支持4096级手写及触控' }
+  ],
+  '触控屏': [
+    { title: '2.8K分辨率超感OLED触控屏', desc: '120Hz刷新率,100% DCI-P3色域' }
+  ],
+  '双屏': [
+    { title: '双触控,双手写,双屏组合', desc: '双2.8K展开实现18英寸大屏' }
+  ],
+  '双屏-2': [
+    { title: '专属双屏应用', desc: 'SmartNote、SmartReader 丰富双屏壁纸,个性幽灵键盘' }
+  ],
+  '双屏-3': [
+    { title: '豪华产品体验', desc: '宝华韦健音响,蝶式支架 磁吸键盘、手写笔丰富配件' }
+  ],
+  '全面屏': [
+    { title: '98%全球最高屏占比', desc: '4K高刷 无界天幕屏' }
+  ],
+  '摄像头': [
+    { title: '全球首款屏下摄像头笔记本', desc: 'AI算法加持优化成像效果' }
+  ],
+  '外观工艺': [
+    { title: '业界首创玻璃UV光刻技术', desc: '碧玺墨玉,实现A面猫眼盈光' }
+  ],
+  '小新屏': [
+    { title: '真好屏OLED鲜活呈现', desc: '大满贯接口外接畅联无需拓展坞' },
+    { title: '16寸高分高刷护眼高亮屏幕', desc: '色域100%全覆盖设计师首选' },
+    { title: '大尺寸SSR超好屏', desc: '高分高刷高色域,专业级色准' },
+    { title: '14寸高分高刷护眼高亮屏幕', desc: '色域100%全覆盖设计师首选' },
+    { title: '1100尼特星耀舒视屏', desc: '专业设计级色彩,久看不累' }
+  ],
+  '扩展': [
+    { title: '双内存插槽扩展', desc: '双M.2 SSD 插槽扩展' },
+    { title: '双内存插槽扩展', desc: '全能扩展,大内存,大存储' }
+  ],
+  '轻薄便携': [
+    { title: '14寸机身1.39kg轻薄便携', desc: 'OLED屏舒适办公更护眼' }
+  ],
+  '性能-2': [
+    { title: '不妥协的大尺寸轻薄性能本', desc: '性能释放至高80W/85W' },
+    { title: '不妥协的轻薄性能小钢炮', desc: '性能释放至高75W/80W' }
   ],
 };
 

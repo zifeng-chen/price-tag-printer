@@ -107,7 +107,7 @@ export function useAccessoryStore() {
 
 export interface ServiceOption { name: string; price: number; category: string; productCategory?: string; }
 
-const SERVICE_STORAGE_KEY = 'price-tag-services-v2';
+const SERVICE_STORAGE_KEY = 'price-tag-services-v3';
 
 const DEFAULT_SERVICES: ServiceOption[] = [
   { name: '一年延保服务', price: 69, category: '延长保修', productCategory: '手机' },
@@ -145,7 +145,11 @@ const DEFAULT_SERVICES: ServiceOption[] = [
   { name: 'YOGA笔记本4年保值换新', price: 499, category: '保值换新', productCategory: '笔记本' },
   { name: '小新笔记本4年保值换新', price: 299, category: '保值换新', productCategory: '笔记本' },
   { name: '联想原厂 16G DDR5笔记本内存升级服务（5600MHz）', price: 1799, category: '升级安装', productCategory: '笔记本' },
-  { name: '联想原厂 1T SSD升级服务', price: 1999, category: '升级安装', productCategory: '笔记本' },
+  { name: '联想原厂 1T SSD升级服务', price: 699, category: '升级安装', productCategory: '笔记本' },
+  { name: 'Lenovo Care 智臻3年 意外+上门+延保', price: 799, category: '延长保修', productCategory: '笔记本' },
+  { name: '联想原厂 32G DDR5内存升级服务', price: 899, category: '升级安装', productCategory: '笔记本' },
+  { name: 'Lenovo Care 智惠4年 延长保修', price: 669, category: '延长保修', productCategory: '笔记本' },
+  { name: '联想原厂 2T SSD升级服务', price: 2199, category: '升级安装', productCategory: '笔记本' },
 ];
 
 function loadServices(): ServiceOption[] {
