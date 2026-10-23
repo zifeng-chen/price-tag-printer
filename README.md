@@ -231,23 +231,28 @@ PRESET_CARDS（src/preset-data.ts）
 
 | 文件 | 导出 | 用途 | 规模 |
 |---|---|---|---|
-| `src/preset-data.ts` | `PRESET_CARDS` | **首次访问的预设数据**，浏览器无缓存时展示 | 17 款 |
+| `src/preset-data.ts` | `PRESET_CARDS` | **首次访问的预设数据**，浏览器无缓存时展示 | 65 款 |
 | `src/copy-data.ts` | `COPY_CARDS` | **内置文案**，「导入内置文案」按钮的数据源 | 17 款 |
-| `public/import-data.json` | — | **导入模板**，供用户下载/参照格式 | 17 款 |
+| `public/import-data.json` | — | **导入模板**，供用户下载/参照格式 | 48 款 |
 
-三份数据内容同源（机型 / 配置 / 图标 / 文案 / 颜色 / 价格一致），分别服务于「初始展示」「一键导入文案」「格式样例」三个场景。维护时应保持同步。
+> **注意**：应用运行时不读取 `public/import-data.json`（它仅是 public 下的静态资源）。真正生效的首屏数据来自 `src/preset-data.ts` 的 `PRESET_CARDS`，其次是浏览器 localStorage 与 UI 手动导入。**维护新数据务必改 `preset-data.ts`**，并同步 bump `usePriceTagStore.ts` 的 `CURRENT_VERSION`，否则旧 localStorage 会覆盖新预设。
+
+预设数据覆盖四大分类：笔记本 17 / 手机 16 / 平板 17 / 台式机 15。`COPY_CARDS` 目前仅含笔记本数据。
 
 **数据来自「离线版整合数据」**，字段对应关系：
 
 | 来源字段 | 项目字段 |
 |---|---|
+| 分类（手机 / 平板 / 台机配件） | `category`（台机配件 → 台式机） |
 | 机型 | `productTitle` |
-| 卖点[].图标名称（如 `i1_屏幕.png`） | `features[].iconName`（`屏幕`） |
+| 卖点[].图标（如 `i1_屏幕.png`） | `features[].iconSrc`（`./icons/i1_屏幕.png`） |
 | 卖点[].标题 / 说明 | `features[].title` / `desc` |
 | 配置[].配置 | `products[].config` |
-| 配置[].颜色[].名称 | `colors[].name` |
-| 配置[].颜色[].国补前 | `colors[].price` |
-| 配置[].颜色[].国补后 | `colors[].subsidyPrice`（0 表示未填） |
+| 配置[].颜色 | `colors[].name` |
+| 配置[].价格 | `colors[].price` |
+| 配置[].国补价 | `colors[].subsidyPrice`（0 表示未填） |
+| 配件[].名称 / 价格 | `accessory1/2Name` / `accessory1/2Price` |
+| 服务[].名称 / 价格 | `service1/2Name` / `service1/2Price`（服务标题统一「想帮帮」） |
 
 > **说明**：当前「国补后」价格尚未落地，数据中统一为 `0`（表示未填）。填入后展牌会自动以「国补价在前、原价在后」展示。
 
@@ -351,6 +356,15 @@ npm run build
 ---
 
 ## 更新日志
+
+### v0.5.0 — 多分类与数据扩充
+
+- **数据**：新增 48 款机型（手机 16 / 平板 17 / 台式机 15），`PRESET_CARDS` 由 17 款扩充至 65 款
+- **图标**：新增 127 个图标资源至 `public/icons/`，图标总数达 154 个
+- **分类**：`CardData` 新增 `category` 字段；`CATEGORIES` 定义「笔记本 / 手机 / 平板 / 台式机」四大分类，`DEFAULT_CATEGORY` 兜底旧数据与导入数据的空/非法分类值
+- **侧栏**：按分类分组渲染（`groupedCards`），笔记本置顶，空分类保留占位
+- **版本**：`CURRENT_VERSION` 升至 `'6'`，避免旧 localStorage 覆盖新预设数据
+- **数据源说明**：源分类「台机配件」对应项目分类「台式机」
 
 ### v0.4.0 — 数据对齐与体验优化
 
