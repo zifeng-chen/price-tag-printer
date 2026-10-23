@@ -8,6 +8,7 @@ import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
 import { getBuiltinIcons, iconCategoriesOf, copyOptionsFor, saveCopyToLibrary } from '../icon-library';
 import type { FeatureItem } from '../types';
+import { calcSubsidyPrice } from '../subsidy';
 
 const accessoryStore = useAccessoryStore();
 const serviceStore = useServiceStore();
@@ -240,9 +241,12 @@ function onSubsidyInput(color: { subsidyPrice?: number }, e: Event) {
   color.subsidyPrice = raw === '' ? 0 : Number(raw);
 }
 
-function onPriceInput(color: { price: number }, e: Event) {
+function onPriceInput(color: { price: number; subsidyPrice?: number }, e: Event) {
   const raw = (e.target as HTMLInputElement).value;
   color.price = raw === '' ? 0 : Number(raw);
+  // 输入原价后按展牌分类自动计算国补价，覆盖已有值
+  const auto = calcSubsidyPrice(color.price, currentCard.value?.category);
+  if (auto !== null) color.subsidyPrice = auto;
 }
 
 function priceFieldValue(v?: number): string | number {
