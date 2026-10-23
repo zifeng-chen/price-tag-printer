@@ -275,6 +275,7 @@ function handleImportData(file: File) {
 
         <div class="help-section">
           <div class="help-h">① 界面布局</div>
+          <img src="/help/layout.svg" alt="界面布局示意" class="help-img" />
           <ul>
             <li><b>左侧 · 展牌管理</b>：按分类（笔记本 / 手机 / 平板 / 台式机）分组列出所有展牌，可搜索、勾选、新建、复制、删除。</li>
             <li><b>中间 · 展牌编辑</b>：编辑当前展牌的卖点、价格、配件、服务四块内容。</li>
@@ -284,6 +285,7 @@ function handleImportData(file: File) {
 
         <div class="help-section">
           <div class="help-h">② 选择与打印展牌</div>
+          <img src="/help/print.svg" alt="选择与打印示意" class="help-img" />
           <ol>
             <li>在左侧分类下<b>勾选</b>需要打印的展牌（可点底部"全选"）。</li>
             <li>点左下角<b>「打印选中」</b>，浏览器弹出打印窗口。</li>
@@ -323,6 +325,7 @@ function handleImportData(file: File) {
 
         <div class="help-section">
           <div class="help-h">⑥ 设置 · 国补规则</div>
+          <img src="/help/settings.svg" alt="设置与国补规则示意" class="help-img" />
           <ul>
             <li>点击顶部<b>「设置」</b>打开。国补规则分两档，可分别设置<b>百分比</b>与<b>封顶金额</b>：
               <br>· 电脑（笔记本 / 台式机）· 移动（手机 / 平板）</li>
@@ -534,6 +537,16 @@ body {
   font-size: 12px;
   color: #999;
   margin-top: 6px;
+}
+
+.help-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 8px 0 12px;
+  border: 1px solid #eee;
+  border-radius: 6px;
 }
 
 .settings-section + .settings-section {

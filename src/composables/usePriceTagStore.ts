@@ -154,6 +154,8 @@ export function usePriceTagStore() {
     if (!source) return;
     const clone: CardData = JSON.parse(JSON.stringify(source));
     clone.id = generateId();
+    // 复制件名称加前缀，便于区分原牌与复制牌
+    clone.productTitle = `复制 - ${source.productTitle || ''}`;
     cards.value.splice(index + 1, 0, clone);
     activeCardIndex.value = index + 1;
     selectedIds.value = new Set([...selectedIds.value, clone.id]);
