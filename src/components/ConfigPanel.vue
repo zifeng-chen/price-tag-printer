@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Modal } from 'view-ui-plus';
 import type { CardData } from '../types';
+import { CATEGORIES } from '../types';
 import { useAccessoryStore } from '../accessory-data';
 import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
@@ -136,25 +137,41 @@ function confirmDeleteAccessory(index: number) {
 
 // Service management
 const showServiceManager = ref(false);
-const newService = ref<ServiceOption>({ name: '', price: 0, category: '' });
+const newService = ref<ServiceOption>({ name: '', price: 0, category: '', productCategory: '' });
 const editingServiceIndex = ref(-1);
 
-function selectService(slot: 1 | 2, name: string) {
+// 仅展示当前展牌分类适用的服务
+const availableServices = computed(() =>
+  serviceStore.services.value.filter(
+    s => !s.productCategory || s.productCategory === currentCard.value?.category,
+  ),
+);
+
+const availableServiceCategories = computed(() => [
+  ...new Set(availableServices.value.map(s => s.category)),
+]);
+
+function onSelectService(slot: 1 | 2, evt: Event) {
+  const raw = (evt.target as HTMLSelectElement).value;
+  if (!raw) return;
+  const [name, price] = raw.split('|||');
+  selectService(slot, name, Number(price) || 0);
+}
+
+function selectService(slot: 1 | 2, name: string, price: number) {
   const card = currentCard.value;
   if (!card || !name) return;
-  const item = serviceStore.services.value.find(s => s.name === name);
-  if (!item) return;
   if (slot === 1) {
-    card.service1Name = item.name;
-    card.service1Price = item.price;
+    card.service1Name = name;
+    card.service1Price = price;
   } else {
-    card.service2Name = item.name;
-    card.service2Price = item.price;
+    card.service2Name = name;
+    card.service2Price = price;
   }
 }
 
 function openAddService() {
-  newService.value = { name: '', price: 0, category: '' };
+  newService.value = { name: '', price: 0, category: '', productCategory: '' };
   editingServiceIndex.value = -1;
   showServiceManager.value = true;
 }
@@ -518,28 +535,28 @@ function deleteFeature(index: number) {
           <div v-show="!collapsed.service">
             <div class="form-group">
               <label>服务1</label>
-              <select @change="selectService(1, ($event.target as HTMLSelectElement).value)">
+              <select @change="onSelectService(1, $event)">
                 <option value="">-- 选择服务 --</option>
-                <optgroup v-for="cat in serviceStore.serviceCategories.value" :key="cat" :label="cat">
+                <optgroup v-for="cat in availableServiceCategories" :key="cat" :label="cat">
                   <option
-                    v-for="svc in serviceStore.services.value.filter(s => s.category === cat)"
-                    :key="svc.name"
-                    :value="svc.name"
-                    :selected="svc.name === currentCard.service1Name"
+                    v-for="(svc, i) in availableServices.filter(s => s.category === cat)"
+                    :key="`${cat}-${i}`"
+                    :value="`${svc.name}|||${svc.price}`"
+                    :selected="svc.name === currentCard.service1Name && svc.price === currentCard.service1Price"
                   >{{ svc.name }} ¥{{ svc.price }}</option>
                 </optgroup>
               </select>
             </div>
             <div class="form-group">
               <label>服务2</label>
-              <select @change="selectService(2, ($event.target as HTMLSelectElement).value)">
+              <select @change="onSelectService(2, $event)">
                 <option value="">-- 选择服务 --</option>
-                <optgroup v-for="cat in serviceStore.serviceCategories.value" :key="cat" :label="cat">
+                <optgroup v-for="cat in availableServiceCategories" :key="cat" :label="cat">
                   <option
-                    v-for="svc in serviceStore.services.value.filter(s => s.category === cat)"
-                    :key="svc.name"
-                    :value="svc.name"
-                    :selected="svc.name === currentCard.service2Name"
+                    v-for="(svc, i) in availableServices.filter(s => s.category === cat)"
+                    :key="`${cat}-${i}`"
+                    :value="`${svc.name}|||${svc.price}`"
+                    :selected="svc.name === currentCard.service2Name && svc.price === currentCard.service2Price"
                   >{{ svc.name }} ¥{{ svc.price }}</option>
                 </optgroup>
               </select>
@@ -610,13 +627,20 @@ function deleteFeature(index: number) {
               <option v-for="cat in serviceStore.serviceCategories.value" :key="cat" :value="cat" />
             </datalist>
           </div>
+          <div class="form-group">
+            <label>适用分类</label>
+            <select v-model="newService.productCategory">
+              <option value="">全部分类</option>
+              <option v-for="cat in CATEGORIES" :key="cat" :value="cat">{{ cat }}</option>
+            </select>
+          </div>
           <button class="btn-add-product" @click="saveService">{{ editingServiceIndex >= 0 ? '保存修改' : '添加服务' }}</button>
         </div>
         <div class="acc-list">
           <div v-for="(svc, idx) in serviceStore.services.value" :key="idx" class="acc-item">
             <div class="acc-info">
               <span class="acc-name">{{ svc.name }}</span>
-              <span class="acc-meta">¥{{ svc.price }} · {{ svc.category }}</span>
+              <span class="acc-meta">¥{{ svc.price }} · {{ svc.category }}{{ svc.productCategory ? ' · ' + svc.productCategory : ' · 全部' }}</span>
             </div>
             <div class="acc-actions">
               <button class="btn-edit-sm" @click="openEditService(idx)">✎</button>

@@ -105,19 +105,47 @@ export function useAccessoryStore() {
 
 // ==================== Service Store ====================
 
-export interface ServiceOption { name: string; price: number; category: string; }
+export interface ServiceOption { name: string; price: number; category: string; productCategory?: string; }
 
-const SERVICE_STORAGE_KEY = 'price-tag-services';
+const SERVICE_STORAGE_KEY = 'price-tag-services-v2';
 
 const DEFAULT_SERVICES: ServiceOption[] = [
-  { name: 'LenovoCare智享4年', price: 899, category: '延保服务' },
-  { name: 'LenovoCare智享3年', price: 699, category: '延保服务' },
-  { name: 'YOGA笔记本保值换新', price: 499, category: '增值服务' },
-  { name: '拯救者保值换新', price: 399, category: '增值服务' },
-  { name: '意外保护2年', price: 599, category: '保险服务' },
-  { name: '意外保护1年', price: 399, category: '保险服务' },
-  { name: '上门安装服务', price: 199, category: '安装服务' },
-  { name: '数据迁移服务', price: 149, category: '安装服务' },
+  { name: '一年延保服务', price: 69, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 89, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 99, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 119, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 199, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 259, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 329, category: '延长保修', productCategory: '手机' },
+  { name: '一年延保服务', price: 599, category: '延长保修', productCategory: '手机' },
+  { name: '一年碎屏保', price: 79, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 119, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 159, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 169, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 199, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 249, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 499, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 599, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏保服务', price: 999, category: '意外保障', productCategory: '手机' },
+  { name: '一年碎屏服务', price: 99, category: '意外保障', productCategory: '手机' },
+  { name: '三年电池延保', price: 159, category: '延长保修', productCategory: '手机' },
+  { name: '二年保值换新服务', price: 199, category: '保值换新', productCategory: '手机' },
+  { name: 'Lenovo Care 平板智享2年', price: 149, category: '延长保修', productCategory: '平板' },
+  { name: 'Lenovo Care 平板智享3年', price: 279, category: '延长保修', productCategory: '平板' },
+  { name: 'Lenovo Care 平板智享4年', price: 409, category: '延长保修', productCategory: '平板' },
+  { name: '联想平板1年延保服务', price: 129, category: '延长保修', productCategory: '平板' },
+  { name: '联想平板1年碎屏无忧服务', price: 129, category: '意外保障', productCategory: '平板' },
+  { name: 'Lenovo Care 智享4年 延长保修+上门+上门清洁', price: 279, category: '延长保修', productCategory: '台式机' },
+  { name: 'Lenovo Care 智臻4年 延长保修+上门+上门体检', price: 719, category: '延长保修', productCategory: '台式机' },
+  { name: 'Lenovo Care 智臻4年 意外+上门+延保', price: 539, category: '意外保障', productCategory: '台式机' },
+  { name: 'LenovoCare智臻04 延长保修+上门+意外', price: 599, category: '意外保障', productCategory: '台式机' },
+  { name: 'LenovoCare智享3年 延长保修+上门+清洁', price: 439, category: '延长保修', productCategory: '笔记本' },
+  { name: 'LenovoCare智享4年 延长保修+上门+清洁', price: 899, category: '延长保修', productCategory: '笔记本' },
+  { name: 'LenovoCare智臻3年 意外+延长保修+上门+清洁', price: 799, category: '意外保障', productCategory: '笔记本' },
+  { name: 'YOGA笔记本4年保值换新', price: 499, category: '保值换新', productCategory: '笔记本' },
+  { name: '小新笔记本4年保值换新', price: 299, category: '保值换新', productCategory: '笔记本' },
+  { name: '联想原厂 16G DDR5笔记本内存升级服务（5600MHz）', price: 1799, category: '升级安装', productCategory: '笔记本' },
+  { name: '联想原厂 1T SSD升级服务', price: 1999, category: '升级安装', productCategory: '笔记本' },
 ];
 
 function loadServices(): ServiceOption[] {
