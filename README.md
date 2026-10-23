@@ -30,10 +30,14 @@
 - **分类分组**：按「笔记本 / 手机 / 平板 / 台式机」分组折叠展示，展开的分类标题吸附在侧栏顶部，切换分类时列表自动回到顶部；初始**不默认勾选**任何展牌
 - **多选**：单张勾选 / 全选 / 取消全选，选中状态独立持久化
 - **新建**：基于默认模板新增一张展牌，自动进入编辑
-- **复制**：一键复制选中展牌（含全部字段），自动进入编辑
+- **复制**：一键复制选中展牌（含全部字段），复制件名称自动加 `复制 - ` 前缀，自动进入编辑
 - **删除**：单张删除（需确认，至少保留 1 张）、删除选中（批量，需确认，可清空全部）
 - **打印**：打印所有选中的展牌
-- **设置**：点击侧栏头部「设置」按钮打开弹窗（见下）
+- **设置 / 使用帮助**：侧栏头部两个醒目按钮，分别打开设置弹窗与使用帮助弹窗（见下）
+
+### 使用帮助弹窗
+
+点击侧栏头部「使用帮助」按钮弹出，以图文形式分 7 节介绍：界面布局、选择与打印、编辑卖点、价格与国补、配件与服务、设置国补规则、数据导入导出。配图位于 `public/help/`（SVG 示意图）。
 
 ### 设置弹窗
 
@@ -188,18 +192,18 @@ interface CardData {
 ### 图标体系
 
 - `src/icon-library.ts` 定义 `BUILTIN_ICONS_BY_CATEGORY`——**按展牌分类隔离**的内置图标库：
-  - 笔记本 27 个 / 手机 44 个 / 平板 47 个 / 台式机 41 个，各含 `name / src / category`
+  - 笔记本 49 个 / 手机 44 个 / 平板 47 个 / 台式机 41 个，各含 `name / src / category`
 - 图标文件位于 `public/icons/`，命名规则 `i{序号}_{名称}.png`，例如 `i1_屏幕.png`
 - 使用方式：`iconType: 'builtin'` + `iconName: '屏幕'` → 通过 `getBuiltinIconSrc(name, category)` 解析为 `/icons/i1_屏幕.png`
 - 编辑卖点时，图标选择器**随当前展牌分类切换**图标集；跨分类存在重名图标（屏幕 / 处理器 / 智能体 / 芯片），解析时以当前分类优先
-- `ICON_COPY_MAP` 提供「图标 → 推荐文案」映射，编辑时可一键关联；用户自定义文案可通过「保存到文案库」写回（持久化于 localStorage）
+- `ICON_COPY_MAP` 提供「图标 → 推荐文案」映射（当前 49 个图标共 129 条文案），编辑时可一键关联；用户自定义文案可通过「保存到文案库」写回（持久化于 localStorage）
 
 ### 配件库与服务库
 
 `src/accessory-data.ts` 提供两套可维护的选项库，存储在 localStorage：
 
-- **配件库**（`useAccessoryStore`）：按分类（耳机 / 支架 / 键鼠 / 背包 / 充电器 等）管理名称与价格
-- **服务库**（`useServiceStore`）：管理服务名称、价格、分组与**适用产品分类**（`productCategory`）
+- **配件库**（`useAccessoryStore`）：57 款配件，按分类（键鼠 / 背包 / 耳机 / 支架 / 充电器 等）管理名称与价格
+- **服务库**（`useServiceStore`）：40 项服务，管理服务名称、价格、分组与**适用产品分类**（`productCategory`）
 
 编辑展牌时可从库中选择，也可在「管理配件库 / 管理服务库」中增删改。服务选择**按当前展牌分类过滤**，例如编辑手机展牌时不会出现平板专属服务。
 
@@ -214,10 +218,11 @@ price-tag-printer/
 ├── vite.config.ts                # Vite 配置（监听 0.0.0.0 + usePolling）
 ├── public/
 │   ├── icons/                    # 分类内置图标（i{序号}_{名称}.png）
+│   ├── help/                     # 使用帮助示意图（layout/print/settings.svg）
 │   └── import-data.json          # 导入模板示例（与 PRESET_CARDS 同源）
 └── src/
     ├── main.ts                   # 应用入口
-    ├── App.vue                   # 三栏布局 + 侧边栏 + 设置弹窗 + 打印 DOM
+    ├── App.vue                   # 三栏布局 + 侧边栏 + 设置/帮助弹窗 + 打印 DOM
     ├── types/index.ts            # 类型定义 + 默认卡片
     ├── subsidy.ts                # 国补规则（可配置、持久化）
     ├── icon-library.ts           # 分类内置图标库 + 图标文案映射 + 用户文案库
@@ -240,7 +245,7 @@ price-tag-printer/
 | `price-tag-printer-selected` | 选中 id 集合 | 独立持久化；初始为空（不默认全选） |
 | `price-tag-printer-version` | 数据版本号 | 与 `CURRENT_VERSION` 不符时清缓存 |
 | `price-tag-accessories-v2` | 配件库 | 用户可增删改 |
-| `price-tag-services-v2` | 服务库 | 用户可增删改 |
+| `price-tag-services-v3` | 服务库 | 用户可增删改 |
 | `price-tag-user-copy` | 用户自定义文案库 | 按图标名归类 |
 | `price-tag-subsidy-config` | 国补规则配置 | 电脑 / 移动 各含百分比与封顶 |
 
@@ -263,28 +268,37 @@ PRESET_CARDS（src/preset-data.ts）
 |---|---|---|---|
 | `src/preset-data.ts` | `PRESET_CARDS` | **首次访问的预设数据**，浏览器无缓存时展示 | 65 款 |
 | `src/copy-data.ts` | `COPY_CARDS` | **内置文案**，「导入内置文案」按钮的数据源 | 17 款 |
+| `src/icon-library.ts` | `BUILTIN_ICONS_BY_CATEGORY` / `ICON_COPY_MAP` | 分类图标库与推荐文案 | 181 图标 / 129 文案 |
+| `src/accessory-data.ts` | `DEFAULT_ACCESSORIES` / `DEFAULT_SERVICES` | 配件库与服务库默认值 | 57 配件 / 40 服务 |
 | `public/import-data.json` | — | **导入模板**，供用户下载/参照格式 | 48 款 |
 
-> **注意**：应用运行时不读取 `public/import-data.json`（它仅是 public 下的静态资源）。真正生效的首屏数据来自 `src/preset-data.ts` 的 `PRESET_CARDS`，其次是浏览器 localStorage 与 UI 手动导入。**维护新数据务必改 `preset-data.ts`**，并同步 bump `usePriceTagStore.ts` 的 `CURRENT_VERSION`，否则旧 localStorage 会覆盖新预设。
+> **注意**：应用运行时不读取 `public/import-data.json`（它仅是 public 下的静态资源）。真正生效的首屏数据来自 `src/preset-data.ts` 的 `PRESET_CARDS`，其次是浏览器 localStorage 与 UI 手动导入。**维护新数据务必改 `preset-data.ts`**，并同步 bump `usePriceTagStore.ts` 的 `CURRENT_VERSION`，否则旧 localStorage 会覆盖新预设。同理，修改配件库 / 服务库默认值后需 bump 对应的 localStorage 存储键（见上）。
 
 预设数据覆盖四大分类：笔记本 17 / 手机 16 / 平板 17 / 台式机 15。`COPY_CARDS` 目前仅含笔记本数据。
 
-**数据来自「离线版整合数据」**，字段对应关系：
+### 数据导入批次
+
+| 批次 | 来源 | 内容 |
+|---|---|---|
+| 分类版 | 「价签数据_分类版」 | 手机 16 / 平板 17 / 台式机 15 款展牌 + 图标 |
+| 配件备份 | `lenovo-price-label-backup-*.json` | 配件库 57 款（新增 10、调价 2） |
+| 服务信息 | 「服务信息.json」 | 36 条服务，按产品分类隔离 |
+| 老品PC 素材 | 「价签数据_老品PC.json」+「图标_老品PC.7z」 | **仅提取图标 / 文案 / 服务，不新增展牌**：笔记本 +22 图标、+77 文案、+4 服务（1T SSD 覆盖为 ¥699） |
+
+**字段对应关系**（分类版数据）：
 
 | 来源字段 | 项目字段 |
 |---|---|
 | 分类（手机 / 平板 / 台机配件） | `category`（台机配件 → 台式机） |
 | 机型 | `productTitle` |
-| 卖点[].图标（如 `i1_屏幕.png`） | `features[].iconSrc`（`./icons/i1_屏幕.png`） |
+| 卖点[].图标（如 `i1_屏幕.png`） | `features[].iconName`（拆解为图标名，走内置图标） |
 | 卖点[].标题 / 说明 | `features[].title` / `desc` |
 | 配置[].配置 | `products[].config` |
 | 配置[].颜色 | `colors[].name` |
 | 配置[].价格 | `colors[].price` |
-| 配置[].国补价 | `colors[].subsidyPrice`（0 表示未填） |
+| 配置[].国补价 | `colors[].subsidyPrice`（0 表示未填，输入原价时自动计算） |
 | 配件[].名称 / 价格 | `accessory1/2Name` / `accessory1/2Price` |
 | 服务[].名称 / 价格 | `service1/2Name` / `service1/2Price`（服务标题统一「想帮帮」） |
-
-> **说明**：当前「国补后」价格尚未落地，数据中统一为 `0`（表示未填）。填入后展牌会自动以「国补价在前、原价在后」展示。
 
 ---
 
@@ -386,6 +400,14 @@ npm run build
 ---
 
 ## 更新日志
+
+### v0.7.0 — 老品PC 素材合并
+
+- **图标**：笔记本内置图标库新增 22 个（外观设计 / 接口 / 轻薄 / 性能 / 充电 / 散热 / 翻转 / 续航 / 铰链 / 触控屏 / 双屏系列 / 全面屏 / 摄像头 / 外观工艺 / 小新屏 / 扩展 / 轻薄便携 / 性能-2 等），笔记本 27 → 49；名称重复的 3 个（处理器 / 智能体 / 屏幕）不入库
+- **文案**：按图标名并入 `ICON_COPY_MAP`，仅添加不重复项，共 129 条
+- **服务**：新增 4 项（智臻3年意外+上门+延保 ¥799、智惠4年延长保修 ¥669、32G DDR5内存升级 ¥899、2T SSD升级 ¥2199）；「联想原厂 1T SSD升级服务」由 ¥1999 覆盖为 ¥699；服务总数 36 → 40
+- **不新增展牌**
+- 服务存储键升至 `price-tag-services-v3` 以刷新默认数据
 
 ### v0.6.0 — 可配置国补规则与交互优化
 
