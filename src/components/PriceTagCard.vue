@@ -23,7 +23,7 @@ defineProps<{
         <div class="icon">
           <img v-if="f.iconType === 'image' && f.iconSrc" :src="f.iconSrc" class="icon-custom" :style="{ width: (f.iconSize || 70) + '%', height: (f.iconSize || 70) + '%' }" alt="" />
           <div v-else-if="f.iconType === 'svg' && f.iconSrc" class="icon-svg" :style="{ width: (f.iconSize || 70) + '%', height: (f.iconSize || 70) + '%' }" v-html="f.iconSrc"></div>
-          <img v-else-if="f.iconType === 'builtin' && getBuiltinIconSrc(f.iconName)" :src="getBuiltinIconSrc(f.iconName)" class="icon-custom" :style="{ width: (f.iconSize || 70) + '%', height: (f.iconSize || 70) + '%' }" alt="" />
+          <img v-else-if="f.iconType === 'builtin' && getBuiltinIconSrc(f.iconName, card.category)" :src="getBuiltinIconSrc(f.iconName, card.category)" class="icon-custom" :style="{ width: (f.iconSize || 70) + '%', height: (f.iconSize || 70) + '%' }" alt="" />
         </div>
         <div class="feature-text">
           <div class="feature-title">{{ f.title }}</div>

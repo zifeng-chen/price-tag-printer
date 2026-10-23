@@ -4,8 +4,10 @@ export interface BuiltinIcon {
   category: string;
 }
 
-export const BUILTIN_ICONS: BuiltinIcon[] = [
-  { name: '屏幕', src: '/icons/i1_屏幕.png', category: '显示' },
+// 各分类的内置图标库：切换展牌分类时，卖点图标选择器随之切换
+export const BUILTIN_ICONS_BY_CATEGORY: Record<string, BuiltinIcon[]> = {
+  '笔记本': [
+    { name: '屏幕', src: '/icons/i1_屏幕.png', category: '显示' },
   { name: '16寸大屏', src: '/icons/i25_16寸大屏.png', category: '显示' },
   { name: 'OLED创作屏', src: '/icons/i22_OLED创作屏.png', category: '显示' },
   { name: '165Hz高刷', src: '/icons/i16_165Hz高刷.png', category: '显示' },
@@ -38,16 +40,171 @@ export const BUILTIN_ICONS: BuiltinIcon[] = [
 
   { name: '品质保障', src: '/icons/i18_品质保障.png', category: '服务' },
   { name: '售后无忧', src: '/icons/i26_售后无忧.png', category: '服务' },
-];
+  ],
+  '手机': [
+  { name: '智能体', src: '/icons/i0_智能体.png', category: 'AI智能' },
+  { name: '影像', src: '/icons/i5_影像.png', category: '影像' },
+  { name: '品质', src: '/icons/i6_品质.png', category: '品质服务' },
+  { name: '钻石', src: '/icons/i7_钻石.png', category: '设计外观' },
+  { name: '续航', src: '/icons/i8_续航.png', category: '续航充电' },
+  { name: '芯片', src: '/icons/i9_芯片.png', category: '性能' },
+  { name: '轻薄', src: '/icons/i16_轻薄.png', category: '设计外观' },
+  { name: '外屏', src: '/icons/i17_外屏.png', category: '显示' },
+  { name: '转轴', src: '/icons/i18_转轴.png', category: '设计外观' },
+  { name: '施华洛世奇', src: '/icons/i19_施华洛世奇.png', category: '设计外观' },
+  { name: '影像-2', src: '/icons/i20_影像-2.png', category: '影像' },
+  { name: '影像-3', src: '/icons/i21_影像-3.png', category: '影像' },
+  { name: '机身', src: '/icons/i22_机身.png', category: '设计外观' },
+  { name: '续航-3', src: '/icons/i23_续航-3.png', category: '续航充电' },
+  { name: '防护', src: '/icons/i24_防护.png', category: '设计外观' },
+  { name: '多开', src: '/icons/i25_多开.png', category: '互联办公' },
+  { name: '影像-4', src: '/icons/i38_影像-4.png', category: '影像' },
+  { name: '护眼-3', src: '/icons/i39_护眼-3.png', category: '显示' },
+  { name: '影像-5', src: '/icons/i40_影像-5.png', category: '影像' },
+  { name: 'Pantone', src: '/icons/i41_Pantone.png', category: '影像' },
+  { name: '钻石-2', src: '/icons/i42_钻石-2.png', category: '设计外观' },
+  { name: '转轴-2', src: '/icons/i43_转轴-2.png', category: '设计外观' },
+  { name: '施华洛世奇-2', src: '/icons/i44_施华洛世奇-2.png', category: '设计外观' },
+  { name: '音质-2', src: '/icons/i45_音质-2.png', category: '音质' },
+  { name: '音质-3', src: '/icons/i46_音质-3.png', category: '音质' },
+  { name: '夹耳', src: '/icons/i47_夹耳.png', category: '设计外观' },
+  { name: '转轴-3', src: '/icons/i48_转轴-3.png', category: '设计外观' },
+  { name: '影像-6', src: '/icons/i49_影像-6.png', category: '影像' },
+  { name: 'Pantone-2', src: '/icons/i50_Pantone-2.png', category: '影像' },
+  { name: '影像-7', src: '/icons/i51_影像-7.png', category: '影像' },
+  { name: 'Pantone-3', src: '/icons/i52_Pantone-3.png', category: '影像' },
+  { name: '机身-2', src: '/icons/i53_机身-2.png', category: '设计外观' },
+  { name: '智能体-3', src: '/icons/i54_智能体-3.png', category: 'AI智能' },
+  { name: '防护-2', src: '/icons/i55_防护-2.png', category: '设计外观' },
+  { name: '护眼-4', src: '/icons/i56_护眼-4.png', category: '显示' },
+  { name: 'NFC', src: '/icons/i57_NFC.png', category: '互联办公' },
+  { name: '游戏', src: '/icons/i58_游戏.png', category: '性能' },
+  { name: '游戏-2', src: '/icons/i59_游戏-2.png', category: '性能' },
+  { name: '屏幕-7', src: '/icons/i60_屏幕-7.png', category: '显示' },
+  { name: '散热-2', src: '/icons/i61_散热-2.png', category: '散热' },
+  { name: '材质', src: '/icons/i62_材质.png', category: '设计外观' },
+  { name: '转轴-4', src: '/icons/i63_转轴-4.png', category: '设计外观' },
+  { name: '材质-2', src: '/icons/i64_材质-2.png', category: '设计外观' },
+  { name: '护眼-5', src: '/icons/i65_护眼-5.png', category: '显示' },
+  ],
+  '平板': [
+  { name: '智能体', src: '/icons/i0_智能体.png', category: 'AI智能' },
+  { name: '屏幕', src: '/icons/i1_屏幕.png', category: '显示' },
+  { name: '护眼', src: '/icons/i2_护眼.png', category: '显示' },
+  { name: '芯片', src: '/icons/i9_芯片.png', category: '性能' },
+  { name: '续航-2', src: '/icons/i10_续航-2.png', category: '续航充电' },
+  { name: '护眼-2', src: '/icons/i11_护眼-2.png', category: '显示' },
+  { name: '性能-2', src: '/icons/i26_性能-2.png', category: '性能' },
+  { name: '屏幕-6', src: '/icons/i27_屏幕-6.png', category: '显示' },
+  { name: '轻薄-2', src: '/icons/i28_轻薄-2.png', category: '设计外观' },
+  { name: '笔写', src: '/icons/i29_笔写.png', category: '互联办公' },
+  { name: '笔写-2', src: '/icons/i30_笔写-2.png', category: '互联办公' },
+  { name: '学习', src: '/icons/i31_学习.png', category: '互联办公' },
+  { name: '性能-3', src: '/icons/i32_性能-3.png', category: '性能' },
+  { name: '游戏-3', src: '/icons/i66_游戏-3.png', category: '性能' },
+  { name: '续航-4', src: '/icons/i67_续航-4.png', category: '续航充电' },
+  { name: '游戏-4', src: '/icons/i68_游戏-4.png', category: '性能' },
+  { name: '续航-5', src: '/icons/i69_续航-5.png', category: '续航充电' },
+  { name: '散热-3', src: '/icons/i70_散热-3.png', category: '散热' },
+  { name: '性能-4', src: '/icons/i71_性能-4.png', category: '性能' },
+  { name: '充电', src: '/icons/i72_充电.png', category: '续航充电' },
+  { name: '性能-5', src: '/icons/i73_性能-5.png', category: '性能' },
+  { name: '游戏-5', src: '/icons/i74_游戏-5.png', category: '性能' },
+  { name: '屏幕-8', src: '/icons/i75_屏幕-8.png', category: '显示' },
+  { name: '学习-2', src: '/icons/i76_学习-2.png', category: '互联办公' },
+  { name: '性能-6', src: '/icons/i77_性能-6.png', category: '性能' },
+  { name: '笔写-3', src: '/icons/i78_笔写-3.png', category: '互联办公' },
+  { name: '互联-2', src: '/icons/i79_互联-2.png', category: '互联办公' },
+  { name: '性能-7', src: '/icons/i80_性能-7.png', category: '性能' },
+  { name: '学习-3', src: '/icons/i81_学习-3.png', category: '互联办公' },
+  { name: '性能-8', src: '/icons/i82_性能-8.png', category: '性能' },
+  { name: '互联-3', src: '/icons/i83_互联-3.png', category: '互联办公' },
+  { name: '笔写-4', src: '/icons/i84_笔写-4.png', category: '互联办公' },
+  { name: '续航-6', src: '/icons/i85_续航-6.png', category: '续航充电' },
+  { name: '笔写-5', src: '/icons/i86_笔写-5.png', category: '互联办公' },
+  { name: '续航-7', src: '/icons/i87_续航-7.png', category: '续航充电' },
+  { name: '性能-9', src: '/icons/i88_性能-9.png', category: '性能' },
+  { name: '品质-2', src: '/icons/i89_品质-2.png', category: '品质服务' },
+  { name: '芯片-2', src: '/icons/i90_芯片-2.png', category: '性能' },
+  { name: '互联-4', src: '/icons/i91_互联-4.png', category: '互联办公' },
+  { name: '笔写-6', src: '/icons/i92_笔写-6.png', category: '互联办公' },
+  { name: '屏幕-9', src: '/icons/i93_屏幕-9.png', category: '显示' },
+  { name: '性能-10', src: '/icons/i94_性能-10.png', category: '性能' },
+  { name: '续航-8', src: '/icons/i95_续航-8.png', category: '续航充电' },
+  { name: '笔写-7', src: '/icons/i96_笔写-7.png', category: '互联办公' },
+  { name: '互联-5', src: '/icons/i97_互联-5.png', category: '互联办公' },
+  { name: '音质-4', src: '/icons/i98_音质-4.png', category: '音质' },
+  { name: '5G', src: '/icons/i99_5G.png', category: '互联办公' },
+  ],
+  '台式机': [
+  { name: '智能体', src: '/icons/i0_智能体.png', category: 'AI智能' },
+  { name: '音质', src: '/icons/i3_音质.png', category: '音质' },
+  { name: '屏幕-2', src: '/icons/i4_屏幕-2.png', category: '显示' },
+  { name: '屏幕-3', src: '/icons/i12_屏幕-3.png', category: '显示' },
+  { name: '性能', src: '/icons/i13_性能.png', category: '性能' },
+  { name: '屏幕-4', src: '/icons/i14_屏幕-4.png', category: '显示' },
+  { name: '屏幕-5', src: '/icons/i15_屏幕-5.png', category: '显示' },
+  { name: '处理器', src: '/icons/i33_处理器.png', category: '性能' },
+  { name: '智能体-2', src: '/icons/i34_智能体-2.png', category: 'AI智能' },
+  { name: '互联', src: '/icons/i35_互联.png', category: '互联办公' },
+  { name: '打印', src: '/icons/i36_打印.png', category: '互联办公' },
+  { name: '散热', src: '/icons/i37_散热.png', category: '散热' },
+  { name: '銮光棱镜', src: '/icons/i100_銮光棱镜.png', category: '其他' },
+  { name: '互联-6', src: '/icons/i101_互联-6.png', category: '互联办公' },
+  { name: '系统', src: '/icons/i102_系统.png', category: 'AI智能' },
+  { name: '内存', src: '/icons/i103_内存.png', category: '性能' },
+  { name: '屏幕-10', src: '/icons/i104_屏幕-10.png', category: '显示' },
+  { name: '屏幕-11', src: '/icons/i105_屏幕-11.png', category: '显示' },
+  { name: '屏幕-12', src: '/icons/i106_屏幕-12.png', category: '显示' },
+  { name: '互联-7', src: '/icons/i107_互联-7.png', category: '互联办公' },
+  { name: '处理器-2', src: '/icons/i108_处理器-2.png', category: '性能' },
+  { name: '处理器-3', src: '/icons/i109_处理器-3.png', category: '性能' },
+  { name: '显卡', src: '/icons/i110_显卡.png', category: '性能' },
+  { name: '存储', src: '/icons/i111_存储.png', category: '性能' },
+  { name: '性能-11', src: '/icons/i112_性能-11.png', category: '性能' },
+  { name: '机身-3', src: '/icons/i113_机身-3.png', category: '设计外观' },
+  { name: '存储-2', src: '/icons/i114_存储-2.png', category: '性能' },
+  { name: '存储-3', src: '/icons/i115_存储-3.png', category: '性能' },
+  { name: '学习-4', src: '/icons/i116_学习-4.png', category: '互联办公' },
+  { name: '品质-3', src: '/icons/i117_品质-3.png', category: '品质服务' },
+  { name: '打印-2', src: '/icons/i118_打印-2.png', category: '互联办公' },
+  { name: '网络', src: '/icons/i119_网络.png', category: '互联办公' },
+  { name: '微信聊天', src: '/icons/i120_微信聊天.png', category: '互联办公' },
+  { name: '鼓粉', src: '/icons/i121_鼓粉.png', category: '品质服务' },
+  { name: '支架', src: '/icons/i122_支架.png', category: '设计外观' },
+  { name: '处理器-4', src: '/icons/i123_处理器-4.png', category: '性能' },
+  { name: '芯片-3', src: '/icons/i124_芯片-3.png', category: '性能' },
+  { name: '散热-4', src: '/icons/i125_散热-4.png', category: '散热' },
+  { name: '智能体-4', src: '/icons/i126_智能体-4.png', category: 'AI智能' },
+  { name: '处理器-5', src: '/icons/i127_处理器-5.png', category: '性能' },
+  { name: '供电', src: '/icons/i128_供电.png', category: '续航充电' },
+  ],
+};
+
+// 兼容旧引用：默认指向笔记本图标集
+export const BUILTIN_ICONS: BuiltinIcon[] = BUILTIN_ICONS_BY_CATEGORY['笔记本'];
+
+export function getBuiltinIcons(category?: string): BuiltinIcon[] {
+  return BUILTIN_ICONS_BY_CATEGORY[category || ''] || BUILTIN_ICONS_BY_CATEGORY['笔记本'];
+}
+
+export function iconCategoriesOf(category?: string): string[] {
+  return [...new Set(getBuiltinIcons(category).map(i => i.category))];
+}
+
 
 export const ICON_CATEGORIES: string[] = [
   ...new Set(BUILTIN_ICONS.map(i => i.category)),
 ];
 
-const ICON_MAP = new Map(BUILTIN_ICONS.map(i => [i.name, i.src]));
-
-export function getBuiltinIconSrc(name: string): string {
-  return ICON_MAP.get(name) || '';
+export function getBuiltinIconSrc(name: string, category?: string): string {
+  const scoped = getBuiltinIcons(category).find(i => i.name === name);
+  if (scoped) return scoped.src;
+  for (const list of Object.values(BUILTIN_ICONS_BY_CATEGORY)) {
+    const hit = list.find(i => i.name === name);
+    if (hit) return hit.src;
+  }
+  return '';
 }
 
 // 图标关联文案：选中内置图标后可选用的候选文案（标题 / 副标题）

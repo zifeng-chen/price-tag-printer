@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Modal } from 'view-ui-plus';
 import type { CardData } from '../types';
 import { CATEGORIES } from '../types';
 import { useAccessoryStore } from '../accessory-data';
 import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
-import { BUILTIN_ICONS, ICON_CATEGORIES, ICON_COPY_MAP } from '../icon-library';
+import { getBuiltinIcons, iconCategoriesOf, ICON_COPY_MAP } from '../icon-library';
 import type { FeatureItem } from '../types';
 
 const accessoryStore = useAccessoryStore();
@@ -275,11 +275,30 @@ function uploadFeatureImage(idx: number, event: Event) {
   reader.readAsDataURL(file);
 }
 
+// 当前展牌分类对应的内置图标集与分组
+const currentCategory = computed(() => currentCard.value?.category || '笔记本');
+const categoryIcons = computed(() => getBuiltinIcons(currentCategory.value));
+const categoryIconGroups = computed(() => iconCategoriesOf(currentCategory.value));
+
+// 切换到不同分类的展牌时，校验内置图标名是否仍属于该分类，不属于则回落为该分类首个图标
+watch(currentCategory, () => {
+  const card = currentCard.value;
+  if (!card) return;
+  const valid = new Set(categoryIcons.value.map(i => i.name));
+  for (const f of card.features) {
+    if (f.iconType === 'builtin' && !valid.has(f.iconName)) {
+      f.iconName = categoryIcons.value[0]?.name || '';
+    }
+  }
+});
+
 function onIconTypeChange(feature: FeatureItem) {
   feature.iconSrc = '';
   feature.linkedCopy = '';
   if (feature.iconType === 'builtin') {
-    if (!feature.iconName) feature.iconName = BUILTIN_ICONS[0].name;
+    if (!feature.iconName || !categoryIcons.value.some(i => i.name === feature.iconName)) {
+      feature.iconName = categoryIcons.value[0]?.name || '';
+    }
     // 内置图标固定 100% 大小
     feature.iconSize = 100;
     applyDefaultCopy(feature);
@@ -327,13 +346,13 @@ function selectLinkedCopy(feature: FeatureItem, key: string) {
 }
 
 function iconsByCategory(category: string) {
-  return BUILTIN_ICONS.filter(i => i.category === category);
+  return categoryIcons.value.filter(i => i.category === category);
 }
 
 function addFeature() {
   const card = currentCard.value;
   if (!card || card.features.length >= MAX_FEATURES) return;
-  card.features.push({ title: '', desc: '', iconType: 'builtin', iconName: BUILTIN_ICONS[0].name, iconSrc: '', iconSize: 70, linkedCopy: '' });
+  card.features.push({ title: '', desc: '', iconType: 'builtin', iconName: categoryIcons.value[0]?.name || '', iconSrc: '', iconSize: 70, linkedCopy: '' });
   featureCollapsed.value.push(false);
 }
 
@@ -402,7 +421,7 @@ function deleteFeature(index: number) {
                   </div>
                   <div v-if="feature.iconType === 'builtin'" class="form-group">
                     <div class="builtin-icon-picker">
-                      <div v-for="cat in ICON_CATEGORIES" :key="cat" class="builtin-icon-group">
+                      <div v-for="cat in categoryIconGroups" :key="cat" class="builtin-icon-group">
                         <div class="builtin-icon-cat">{{ cat }}</div>
                         <div class="builtin-icon-grid">
                           <button
