@@ -291,6 +291,11 @@ body {
   cursor: pointer;
   border-radius: 6px;
   user-select: none;
+  position: sticky;
+  top: -6px;
+  z-index: 2;
+  background: #fff;
+  box-shadow: 0 1px 0 #f0f0f0;
 }
 
 .group-header:hover { background: #f5f5f5; }
