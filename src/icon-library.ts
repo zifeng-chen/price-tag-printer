@@ -1,3 +1,5 @@
+import { ref, watch } from 'vue';
+
 export interface BuiltinIcon {
   name: string;
   src: string;
@@ -316,3 +318,40 @@ export const ICON_COPY_MAP: Record<string, { title: string; desc: string }[]> = 
     { title: '联想售后保障', desc: '全国 4400＋服务点' },
   ],
 };
+
+// 用户自定义文案库（持久化）：按图标名归类，选图标时并入候选文案
+const USER_COPY_KEY = 'price-tag-user-copy';
+
+type CopyEntry = { title: string; desc: string };
+
+function loadUserCopy(): Record<string, CopyEntry[]> {
+  try {
+    const raw = localStorage.getItem(USER_COPY_KEY);
+    if (raw) {
+      const obj = JSON.parse(raw);
+      if (obj && typeof obj === 'object') return obj;
+    }
+  } catch { /* ignore */ }
+  return {};
+}
+
+const userCopyMap = ref<Record<string, CopyEntry[]>>(loadUserCopy());
+
+watch(userCopyMap, val => {
+  try {
+    localStorage.setItem(USER_COPY_KEY, JSON.stringify(val));
+  } catch { /* ignore */ }
+}, { deep: true });
+
+export function copyOptionsFor(iconName: string): CopyEntry[] {
+  return [...(ICON_COPY_MAP[iconName] || []), ...(userCopyMap.value[iconName] || [])];
+}
+
+// 保存自定义文案到文案库（按图标名归类，标题+副标题去重）
+export function saveCopyToLibrary(iconName: string, title: string, desc: string): boolean {
+  if (!iconName || !title.trim()) return false;
+  const list = userCopyMap.value[iconName] || [];
+  if (list.some(c => c.title === title && c.desc === desc)) return false;
+  userCopyMap.value = { ...userCopyMap.value, [iconName]: [...list, { title, desc }] };
+  return true;
+}

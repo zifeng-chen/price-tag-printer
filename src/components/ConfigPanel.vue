@@ -6,7 +6,7 @@ import { CATEGORIES } from '../types';
 import { useAccessoryStore } from '../accessory-data';
 import { useServiceStore } from '../accessory-data';
 import type { AccessoryOption, ServiceOption } from '../accessory-data';
-import { getBuiltinIcons, iconCategoriesOf, ICON_COPY_MAP } from '../icon-library';
+import { getBuiltinIcons, iconCategoriesOf, copyOptionsFor, saveCopyToLibrary } from '../icon-library';
 import type { FeatureItem } from '../types';
 
 const accessoryStore = useAccessoryStore();
@@ -309,7 +309,7 @@ function onIconTypeChange(feature: FeatureItem) {
 
 function linkedCopyOptions(feature: FeatureItem) {
   if (feature.iconType !== 'builtin' || !feature.iconName) return [];
-  return ICON_COPY_MAP[feature.iconName] || [];
+  return copyOptionsFor(feature.iconName);
 }
 
 function copyKey(copy: { title: string; desc: string }) {
@@ -343,6 +343,15 @@ function selectLinkedCopy(feature: FeatureItem, key: string) {
   if (!copy) return;
   feature.title = copy.title;
   feature.desc = copy.desc;
+}
+
+// 把当前自定义文案保存进文案库（按图标名归类）
+function saveCopy(feature: FeatureItem) {
+  if (feature.iconType !== 'builtin' || !feature.iconName) return;
+  const ok = saveCopyToLibrary(feature.iconName, feature.title, feature.desc);
+  if (ok) {
+    feature.linkedCopy = copyKey({ title: feature.title, desc: feature.desc });
+  }
 }
 
 function iconsByCategory(category: string) {
@@ -475,7 +484,14 @@ function deleteFeature(index: number) {
                   </div>
                   <div class="form-group">
                     <label>副标题</label>
-                    <input type="text" v-model="feature.desc" />
+                    <div class="edit-row">
+                      <input type="text" v-model="feature.desc" />
+                      <button
+                        v-if="feature.iconType === 'builtin' && feature.iconName"
+                        class="btn-save-service"
+                        @click="saveCopy(feature)"
+                      >保存到文案库</button>
+                    </div>
                   </div>
                 </div>
               </div>
