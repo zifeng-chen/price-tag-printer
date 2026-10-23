@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { Modal } from 'view-ui-plus';
 import { usePriceTagStore } from './composables/usePriceTagStore';
 import ConfigPanel from './components/ConfigPanel.vue';
@@ -29,10 +29,18 @@ const groupedCards = computed(() => store.groupedCards.value);
 
 // 手风琴式：同一时刻最多只展开一个分类，默认展开「笔记本」
 const expandedCategory = ref<string | null>(DEFAULT_CATEGORY);
+const sidebarListRef = ref<HTMLElement | null>(null);
 
 function toggleCategory(category: string) {
   // 点击已展开的分类则收起，点击其他分类则展开它并收起其余
-  expandedCategory.value = expandedCategory.value === category ? null : category;
+  const expanding = expandedCategory.value !== category;
+  expandedCategory.value = expanding ? category : null;
+  // 新展开的分类列表回到最顶部
+  if (expanding) {
+    nextTick(() => {
+      sidebarListRef.value?.scrollTo({ top: 0 });
+    });
+  }
 }
 
 // 上半部分：当前展开的分类（含其展牌列表）
@@ -134,7 +142,7 @@ function handleImportCopy() {
           <i-input v-model:model-value="searchQuery" placeholder="搜索产品名称..." search clearable size="small" />
         </div>
 
-        <div class="sidebar-list">
+        <div ref="sidebarListRef" class="sidebar-list">
           <template v-for="group in expandedGroups" :key="group.category">
             <div class="group-header" @click="toggleCategory(group.category)">
               <Icon type="ios-arrow-down" class="group-arrow" />
