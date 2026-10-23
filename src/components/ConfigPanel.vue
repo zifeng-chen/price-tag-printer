@@ -170,6 +170,32 @@ function selectService(slot: 1 | 2, name: string, price: number) {
   }
 }
 
+// 把当前展牌已选/已编辑的服务写回服务库（按名称+适用分类去重）
+function saveServiceToLibrary(slot: 1 | 2) {
+  const card = currentCard.value;
+  if (!card) return;
+  const name = slot === 1 ? card.service1Name : card.service2Name;
+  const price = slot === 1 ? card.service1Price : card.service2Price;
+  if (!name.trim()) return;
+
+  const productCategory = card.category;
+  const existing = serviceStore.services.value.find(
+    s => s.name === name && s.productCategory === productCategory,
+  );
+  if (existing) {
+    existing.price = price;
+    // 触发深层 watch 持久化
+    serviceStore.services.value = [...serviceStore.services.value];
+  } else {
+    serviceStore.addService({
+      name,
+      price,
+      category: '其他服务',
+      productCategory,
+    });
+  }
+}
+
 function openAddService() {
   newService.value = { name: '', price: 0, category: '', productCategory: '' };
   editingServiceIndex.value = -1;
@@ -549,6 +575,7 @@ function deleteFeature(index: number) {
               <div class="edit-row">
                 <input type="text" v-model="currentCard.service1Name" placeholder="服务名称" />
                 <input type="number" v-model.number="currentCard.service1Price" placeholder="价格" class="price-input" />
+                <button class="btn-save-service" @click="saveServiceToLibrary(1)">保存到服务库</button>
               </div>
             </div>
             <div class="form-group">
@@ -567,6 +594,7 @@ function deleteFeature(index: number) {
               <div class="edit-row">
                 <input type="text" v-model="currentCard.service2Name" placeholder="服务名称" />
                 <input type="number" v-model.number="currentCard.service2Price" placeholder="价格" class="price-input" />
+                <button class="btn-save-service" @click="saveServiceToLibrary(2)">保存到服务库</button>
               </div>
             </div>
           </div>
@@ -745,6 +773,22 @@ function deleteFeature(index: number) {
 .edit-row .price-input {
   width: 90px;
   flex: none;
+}
+
+.btn-save-service {
+  flex: none;
+  padding: 0 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #FF6A00;
+  background: #fff;
+  border: 1px solid #FF6A00;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save-service:hover {
+  background: #FFF3EA;
 }
 
 .config-section {
