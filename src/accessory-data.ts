@@ -2,7 +2,7 @@ import { ref, watch, computed } from 'vue';
 
 export interface AccessoryOption { name: string; price: number; category: string; }
 
-const ACCESSORY_STORAGE_KEY = 'price-tag-accessories';
+const ACCESSORY_STORAGE_KEY = 'price-tag-accessories-v2';
 
 const DEFAULT_ACCESSORIES: AccessoryOption[] = [
   { name: '拯救者R360无线耳机', price: 249, category: '耳机' },
@@ -25,8 +25,8 @@ const DEFAULT_ACCESSORIES: AccessoryOption[] = [
   { name: '异能者M201有线鼠标', price: 99, category: '键鼠' },
   { name: '小新M2蓝牙鼠标', price: 159, category: '键鼠' },
   { name: '小新人体工学鼠标', price: 159, category: '键鼠' },
-  { name: '拯救者M7X炫光版鼠标', price: 199, category: '键鼠' },
-  { name: '拯救者M5游戏鼠标', price: 299, category: '键鼠' },
+  { name: '拯救者M7X炫光版鼠标', price: 269, category: '键鼠' },
+  { name: '拯救者M5游戏鼠标', price: 169, category: '键鼠' },
   { name: '极光三模GM11Pro游戏鼠标', price: 199, category: '键鼠' },
   { name: '拯救者M6X系列鼠标', price: 199, category: '键鼠' },
   { name: '拯救者C4双肩包', price: 299, category: '背包' },
@@ -54,6 +54,14 @@ const DEFAULT_ACCESSORIES: AccessoryOption[] = [
   { name: '启天双口闪存盘64G', price: 129, category: '电脑配件' },
   { name: '拯救者 游戏手柄G3', price: 169, category: '手机配件' },
   { name: '拯救者 游戏手柄 G9', price: 499, category: '手机配件' },
+  { name: '小新K1S轻音无线键鼠套装', price: 199, category: '键鼠' },
+  { name: '联想KN210无线键鼠套装', price: 159, category: '键鼠' },
+  { name: '拯救者 R9 68 磁轴电竞键盘', price: 999, category: '键鼠' },
+  { name: '联想手提内胆包B14', price: 99, category: '背包' },
+  { name: '异能者MK82机械键盘', price: 289, category: '键鼠' },
+  { name: '小新小Q蓝牙无线鼠标', price: 99, category: '键鼠' },
+  { name: '小新K2有线游戏键盘', price: 159, category: '键鼠' },
+  { name: '拯救者R7轻量化电竞鼠标', price: 429, category: '键鼠' },
 ];
 
 function loadAccessories(): AccessoryOption[] {
