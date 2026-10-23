@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Modal } from 'view-ui-plus';
 import { usePriceTagStore } from './composables/usePriceTagStore';
 import ConfigPanel from './components/ConfigPanel.vue';
 import PreviewPanel from './components/PreviewPanel.vue';
 import PriceTagCard from './components/PriceTagCard.vue';
 import type { CardData } from './types';
+import { DEFAULT_CATEGORY } from './types';
 import { COPY_CARDS } from './copy-data';
 
 const store = usePriceTagStore();
@@ -23,6 +24,28 @@ const searchQuery = computed({
 
 const filteredCards = computed(() => store.filteredCards.value);
 const selectedIds = computed(() => store.selectedIds.value);
+
+const groupedCards = computed(() => store.groupedCards.value);
+
+// 手风琴式：同一时刻最多只展开一个分类，默认展开「笔记本」
+const expandedCategory = ref<string | null>(DEFAULT_CATEGORY);
+
+function toggleCategory(category: string) {
+  // 点击已展开的分类则收起，点击其他分类则展开它并收起其余
+  expandedCategory.value = expandedCategory.value === category ? null : category;
+}
+
+// 上半部分：当前展开的分类（含其展牌列表）
+const expandedGroups = computed(() =>
+  expandedCategory.value
+    ? groupedCards.value.filter(g => g.category === expandedCategory.value)
+    : []
+);
+
+// 底部固定区：其余分类，点击即可展开（展开时其余自动收起）
+const pinnedGroups = computed(() =>
+  groupedCards.value.filter(g => g.category !== expandedCategory.value)
+);
 
 const isAllSelected = computed(() => {
   return cards.value.length > 0 && selectedIds.value.size === cards.value.length;
@@ -112,24 +135,45 @@ function handleImportCopy() {
         </div>
 
         <div class="sidebar-list">
-          <div
-            v-for="{ card, index } in filteredCards"
-            :key="card.id"
-            class="list-item"
-            :class="{ active: index === activeIndex }"
-            @click="activeIndex = index"
-          >
-            <Checkbox :model-value="selectedIds.has(card.id)" @click.stop @on-change="store.toggleSelect(card.id)" />
-            <div class="item-info">
-              <div class="item-name">{{ card.productTitle || '未命名' }}</div>
-              <div class="item-meta">{{ card.products.reduce((s, p) => s + p.colors.length, 0) }}行</div>
+          <template v-for="group in expandedGroups" :key="group.category">
+            <div class="group-header" @click="toggleCategory(group.category)">
+              <Icon type="ios-arrow-down" class="group-arrow" />
+              <span class="group-title">{{ group.category }}</span>
+              <span class="group-count">{{ group.items.length }}</span>
             </div>
-            <div class="item-actions">
-              <Button size="small" type="text" icon="md-copy" title="复制" @click.stop="confirmDuplicate(index)" />
-              <Button size="small" type="text" icon="md-trash" title="删除" :disabled="cards.length <= 1" @click.stop="confirmDelete(index)" class="danger-btn" />
+            <div
+              v-for="{ card, index } in group.items"
+              :key="card.id"
+              class="list-item"
+              :class="{ active: index === activeIndex }"
+              @click="activeIndex = index"
+            >
+              <Checkbox :model-value="selectedIds.has(card.id)" @click.stop @on-change="store.toggleSelect(card.id)" />
+              <div class="item-info">
+                <div class="item-name">{{ card.productTitle || '未命名' }}</div>
+                <div class="item-meta">{{ card.products.reduce((s, p) => s + p.colors.length, 0) }}行</div>
+              </div>
+              <div class="item-actions">
+                <Button size="small" type="text" icon="md-copy" title="复制" @click.stop="confirmDuplicate(index)" />
+                <Button size="small" type="text" icon="md-trash" title="删除" :disabled="cards.length <= 1" @click.stop="confirmDelete(index)" class="danger-btn" />
+              </div>
             </div>
-          </div>
+            <div v-if="group.items.length === 0" class="empty-hint">暂无展牌</div>
+          </template>
           <div v-if="filteredCards.length === 0" class="empty-hint">无匹配结果</div>
+        </div>
+
+        <div v-if="pinnedGroups.length" class="sidebar-pinned">
+          <div
+            v-for="group in pinnedGroups"
+            :key="group.category"
+            class="group-header pinned"
+            @click="toggleCategory(group.category)"
+          >
+            <Icon type="ios-arrow-forward" class="group-arrow" />
+            <span class="group-title">{{ group.category }}</span>
+            <span class="group-count">{{ group.items.length }}</span>
+          </div>
         </div>
 
         <div class="sidebar-footer">
@@ -234,6 +278,49 @@ body {
   overflow-y: auto;
   padding: 6px;
 }
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+  margin: 4px 0 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  cursor: pointer;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.group-header:hover { background: #f5f5f5; }
+
+.group-header .group-arrow { font-size: 12px; color: #999; flex: none; }
+.group-header .group-title { flex: 1; }
+.group-header .group-count {
+  font-size: 10px;
+  font-weight: 500;
+  color: #aaa;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 0 6px;
+  line-height: 16px;
+}
+
+.sidebar-pinned {
+  flex: none;
+  border-top: 1px solid #f0f0f0;
+  background: #fcfcfc;
+  padding: 4px 6px;
+}
+
+.group-header.pinned {
+  margin: 2px 0;
+  color: #FF6A00;
+}
+
+.group-header.pinned:hover { background: #fff7f0; }
+.group-header.pinned .group-arrow { color: #FF6A00; }
 
 .list-item {
   display: flex;

@@ -4,6 +4,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy014280387012",
     "productTitle": "YOGA Pro 15 Aura AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -83,6 +84,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy021242886303",
     "productTitle": "YOGA Pro 16 Aura AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -144,6 +146,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy033337446730",
     "productTitle": "小新 Pro 16 GT AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -214,6 +217,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy046308786135",
     "productTitle": "小新 Pro 14 GT AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -284,6 +288,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy057970309701",
     "productTitle": "小新 Pro 16 AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -354,6 +359,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy064530265750",
     "productTitle": "小新 Pro 14 AI元启版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -424,6 +430,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy075942859575",
     "productTitle": "拯救者 Y9000P",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -503,6 +510,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy086268661555",
     "productTitle": "拯救者 R7000X",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -556,6 +564,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy096898329840",
     "productTitle": "拯救者 Y7000X",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -626,6 +635,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy103454155475",
     "productTitle": "YOGA Air 14 Ultra",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -705,6 +715,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy117294919105",
     "productTitle": "YOGA Air 14",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -766,6 +777,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy127333232862",
     "productTitle": "联想小新Air14 2026",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -828,6 +840,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy136407400315",
     "productTitle": "来酷Lecoo Air16酷睿版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -898,6 +911,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy145038782778",
     "productTitle": "来酷Lecoo Air14酷睿版",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -959,6 +973,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy155145683452",
     "productTitle": "联想LOQ 15",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -1020,6 +1035,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy166847695787",
     "productTitle": "YOGA Pro 15 N1X11",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {
@@ -1090,6 +1106,7 @@ export const COPY_CARDS: CardData[] = [
   {
     "id": "copy177536871105",
     "productTitle": "来酷GT16",
+    "category": "笔记本",
     "showProductImage": true,
     "features": [
       {

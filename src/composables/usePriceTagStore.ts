@@ -1,12 +1,22 @@
 import { ref, watch, computed } from 'vue';
 import type { CardData } from '../types';
-import { createDefaultCard, generateId } from '../types';
+import { createDefaultCard, generateId, CATEGORIES, DEFAULT_CATEGORY } from '../types';
 import { PRESET_CARDS } from '../preset-data';
 
 const STORAGE_KEY = 'price-tag-printer-data';
 const SELECTED_KEY = 'price-tag-printer-selected';
 const VERSION_KEY = 'price-tag-printer-version';
-const CURRENT_VERSION = '4';
+const CURRENT_VERSION = '6';
+
+// 兼容旧数据 / 导入数据：无 category 或非法值统一归入默认分类
+function normalizeCards(list: CardData[]): CardData[] {
+  return list.map(card => ({
+    ...card,
+    category: (CATEGORIES as readonly string[]).includes(card.category)
+      ? card.category
+      : DEFAULT_CATEGORY,
+  }));
+}
 
 function loadFromStorage(): CardData[] | null {
   try {
@@ -22,7 +32,7 @@ function loadFromStorage(): CardData[] | null {
     if (raw) {
       const data = JSON.parse(raw);
       // Ignore an empty list so the preset is shown again after a full delete
-      if (Array.isArray(data) && data.length > 0) return data;
+      if (Array.isArray(data) && data.length > 0) return normalizeCards(data);
     }
   } catch { /* ignore */ }
   return null;
@@ -78,6 +88,15 @@ export function usePriceTagStore() {
       list = list.filter(({ card }) => card.productTitle.toLowerCase().includes(q));
     }
     return list.sort((a, b) => a.card.productTitle.localeCompare(b.card.productTitle, 'zh-CN'));
+  });
+
+  // 左侧展牌管理：按分类分组，笔记本始终在最前，其余按 CATEGORIES 顺序；
+  // 空分类也保留（作为底部固定分组）
+  const groupedCards = computed(() => {
+    return CATEGORIES.map(category => ({
+      category,
+      items: filteredCards.value.filter(({ card }) => card.category === category),
+    }));
   });
 
   const selectedCards = computed(() => {
@@ -159,9 +178,10 @@ export function usePriceTagStore() {
   }
 
   function mergeCards(incoming: CardData[], selectNew = false) {
+    const normalized = normalizeCards(incoming);
     const existingMap = new Map(cards.value.map(c => [c.productTitle, c]));
     const added: string[] = [];
-    for (const item of incoming) {
+    for (const item of normalized) {
       const existing = existingMap.get(item.productTitle);
       if (existing) {
         Object.assign(existing, item, { id: existing.id });
@@ -219,6 +239,7 @@ export function usePriceTagStore() {
     searchQuery,
     viewMode,
     filteredCards,
+    groupedCards,
     selectedCards,
     toggleSelect,
     selectAll,

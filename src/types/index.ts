@@ -19,9 +19,16 @@ export interface FeatureItem {
   linkedCopy?: string; // 已选关联文案的来源标识（title\0desc），仅作标记，不覆盖手动编辑
 }
 
+export const CATEGORIES = ['笔记本', '手机', '平板', '台式机'] as const;
+
+export type Category = (typeof CATEGORIES)[number];
+
+export const DEFAULT_CATEGORY: Category = '笔记本';
+
 export interface CardData {
   id: string;
   productTitle: string;
+  category: Category; // 展牌分类（笔记本 / 手机 / 平板 / 台式机）
   showProductImage: boolean;
   features: FeatureItem[];
   products: ProductItem[];
@@ -46,6 +53,7 @@ export function createDefaultCard(): CardData {
   return {
     id: generateId(),
     productTitle: 'YOGA Pro 15 Aura AI元启版',
+    category: DEFAULT_CATEGORY,
     showProductImage: true,
     features: [
       { title: '紧凑机身 便携大屏', desc: '15英寸 轻至1.69kg', iconType: 'builtin', iconName: '屏幕', iconSrc: '', iconSize: 70 },
