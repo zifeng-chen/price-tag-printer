@@ -546,6 +546,10 @@ function deleteFeature(index: number) {
                   >{{ svc.name }} ¥{{ svc.price }}</option>
                 </optgroup>
               </select>
+              <div class="edit-row">
+                <input type="text" v-model="currentCard.service1Name" placeholder="服务名称" />
+                <input type="number" v-model.number="currentCard.service1Price" placeholder="价格" class="price-input" />
+              </div>
             </div>
             <div class="form-group">
               <label>服务2</label>
@@ -560,6 +564,10 @@ function deleteFeature(index: number) {
                   >{{ svc.name }} ¥{{ svc.price }}</option>
                 </optgroup>
               </select>
+              <div class="edit-row">
+                <input type="text" v-model="currentCard.service2Name" placeholder="服务名称" />
+                <input type="number" v-model.number="currentCard.service2Price" placeholder="价格" class="price-input" />
+              </div>
             </div>
           </div>
         </div>
@@ -726,6 +734,17 @@ function deleteFeature(index: number) {
 .form-group select:focus {
   border-color: #FF6A00;
   box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.1);
+}
+
+.edit-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.edit-row .price-input {
+  width: 90px;
+  flex: none;
 }
 
 .config-section {
