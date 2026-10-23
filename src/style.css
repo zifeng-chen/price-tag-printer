@@ -1,3 +1,26 @@
+/* 主题色 */
+:root {
+  --brand-primary: #E45A00;
+  --brand-primary-dark: #C74E00;
+  --brand-primary-light: #FF7A1A;
+  --brand-gradient: linear-gradient(135deg, #E45A00, #FF8A2B);
+}
+
+/* 将 UI 库主色对齐品牌色 */
+.ivu-btn-primary {
+  background-color: var(--brand-primary) !important;
+  border-color: var(--brand-primary) !important;
+}
+
+.ivu-btn-primary:hover {
+  background-color: var(--brand-primary-light) !important;
+  border-color: var(--brand-primary-light) !important;
+}
+
+.ivu-modal-header {
+  border-bottom: 2px solid var(--brand-primary);
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

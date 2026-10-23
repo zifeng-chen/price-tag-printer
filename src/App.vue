@@ -129,6 +129,12 @@ function handleImportCopy() {
   });
 }
 
+// ===== 使用帮助弹窗 =====
+const helpVisible = ref(false);
+function openHelp() {
+  helpVisible.value = true;
+}
+
 // ===== 设置弹窗 =====
 const settingsVisible = ref(false);
 // 草稿配置：弹窗内编辑，点保存并二次确认后才生效
@@ -181,7 +187,10 @@ function handleImportData(file: File) {
       <aside class="list-sidebar">
         <div class="sidebar-header">
           <h1>展牌管理</h1>
-          <Button class="settings-btn" size="small" icon="md-settings" @click="openSettings">设置</Button>
+          <div class="header-actions">
+            <Button class="header-btn" size="small" icon="md-help-circle" @click="openHelp">使用帮助</Button>
+            <Button class="header-btn" size="small" icon="md-settings" @click="openSettings">设置</Button>
+          </div>
         </div>
 
         <div class="sidebar-search">
@@ -256,6 +265,84 @@ function handleImportData(file: File) {
         <PreviewPanel :cards="previewCards" :active-card-id="activeCardId" @delete-card="handleDeleteById($event)" />
       </div>
     </div>
+
+    <!-- 使用帮助弹窗 -->
+    <Modal v-model="helpVisible" title="使用帮助" :footer-hide="true" :width="680">
+      <div class="help-body">
+        <p class="help-intro">
+          本工具用于制作联想产品<b>价格展牌（价签）</b>：左侧选展牌、中间改内容、右侧实时预览，最后打印。所有修改自动保存在本地浏览器。
+        </p>
+
+        <div class="help-section">
+          <div class="help-h">① 界面布局</div>
+          <ul>
+            <li><b>左侧 · 展牌管理</b>：按分类（笔记本 / 手机 / 平板 / 台式机）分组列出所有展牌，可搜索、勾选、新建、复制、删除。</li>
+            <li><b>中间 · 展牌编辑</b>：编辑当前展牌的卖点、价格、配件、服务四块内容。</li>
+            <li><b>右侧 · 实时预览</b>：所见即所得的 A4 效果预览。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">② 选择与打印展牌</div>
+          <ol>
+            <li>在左侧分类下<b>勾选</b>需要打印的展牌（可点底部"全选"）。</li>
+            <li>点左下角<b>「打印选中」</b>，浏览器弹出打印窗口。</li>
+            <li>打印设置里选择纸张 A4、边距"无"、关闭页眉页脚，即可输出。</li>
+          </ol>
+          <p class="help-note">提示：每张展牌占一页，只打印勾选的内容。</p>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">③ 编辑卖点信息</div>
+          <ul>
+            <li>每条卖点包含：<b>图标</b>、<b>标题</b>、<b>副标题</b>。</li>
+            <li>图标有三种类型：<b>内置图标</b>（随展牌分类自动切换图标库）、<b>上传图片</b>、<b>SVG</b>。</li>
+            <li>选内置图标后，可在<b>「关联文案」</b>下拉里一键套用推荐文案；自定义文案可点<b>「保存到文案库」</b>，之后同图标的卖点都能复用。</li>
+            <li>可拖动/调整图标大小（1–100%），并增删卖点条目。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">④ 编辑价格与国补</div>
+          <ul>
+            <li>每行包含：产品配置名、颜色名、<b>原价</b>、<b>国补价</b>。</li>
+            <li>输入<b>原价</b>时，系统会按当前展牌分类<b>自动计算国补价</b>，也可手动改；再次改原价会重新算。</li>
+            <li>国补规则可在「设置」里修改百分比与封顶（见下）。</li>
+            <li>国补价为国补后价格；价格行间距可调。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">⑤ 编辑配件与服务</div>
+          <ul>
+            <li><b>配件</b>：从配件库选择配件 1 / 配件 2 的名称与价格，可控制是否显示。</li>
+            <li><b>服务</b>：服务库已<b>按产品分类隔离</b>——编辑手机展牌时只显示手机适用的服务，不会混入平板专属服务。</li>
+            <li>服务选定后可自行修改名称与价格，并可点<b>「保存到服务库」</b>写回，供其他展牌复用。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">⑥ 设置 · 国补规则</div>
+          <ul>
+            <li>点击顶部<b>「设置」</b>打开。国补规则分两档，可分别设置<b>百分比</b>与<b>封顶金额</b>：
+              <br>· 电脑（笔记本 / 台式机）· 移动（手机 / 平板）</li>
+            <li>计算公式：<b>补贴 = 原价 × 百分比</b>，超过封顶按封顶计；<b>国补价 = 原价 − 补贴</b>。</li>
+            <li>修改后需点<b>「保存」并二次确认</b>才生效。</li>
+            <li>点<b>「按新规则重算」</b>并二次确认，可用新规则<b>重算所有展牌</b>的国补价（会覆盖现有值）。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <div class="help-h">⑦ 数据导入 / 导出</div>
+          <ul>
+            <li>在「设置」弹窗的<b>数据管理</b>区：可<b>导出选中</b> / <b>导出全部</b>当前数据为 JSON 备份。</li>
+            <li><b>导入数据</b>：选择之前导出的 JSON，按机型名合并覆盖。</li>
+            <li><b>导入内置文案</b>：一键套用内置的 17 款机型文案。</li>
+          </ul>
+          <p class="help-note">数据保存在浏览器本地。更换浏览器或清理缓存会丢失，重要数据请及时导出备份。</p>
+        </div>
+      </div>
+    </Modal>
 
     <!-- 设置弹窗 -->
     <Modal v-model="settingsVisible" title="设置" :footer-hide="true" :width="520">
@@ -349,33 +436,104 @@ body {
 }
 
 .sidebar-header {
-  padding: 16px;
-  background: linear-gradient(135deg, #FF6A00, #ff9a44);
+  padding: 14px 16px;
+  background: var(--brand-gradient);
   color: #fff;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  box-shadow: 0 2px 8px rgba(228, 90, 0, 0.25);
 }
 
 .sidebar-header h1 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.settings-btn {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: transparent !important;
-  color: #fff !important;
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.settings-btn:hover {
-  background: rgba(255, 255, 255, 0.32) !important;
+/* 头部按钮：白底橙字，高对比醒目 */
+.header-btn {
+  background: #fff !important;
+  border: none !important;
+  color: var(--brand-primary) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.header-btn:hover {
+  background: #fff !important;
+  color: var(--brand-primary-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22) !important;
+}
+
+.header-btn i {
+  color: var(--brand-primary) !important;
 }
 
 .settings-section {
   padding: 12px 0;
+}
+
+/* 使用帮助 */
+.help-body {
+  max-height: 68vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.help-intro {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #444;
+  background: #FFF6EF;
+  border-left: 3px solid var(--brand-primary);
+  padding: 10px 12px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+
+.help-section {
+  margin-bottom: 14px;
+}
+
+.help-h {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin-bottom: 6px;
+}
+
+.help-section ul,
+.help-section ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.help-section li {
+  font-size: 13px;
+  line-height: 1.75;
+  color: #555;
+}
+
+.help-section b {
+  color: #333;
+}
+
+.help-note {
+  font-size: 12px;
+  color: #999;
+  margin-top: 6px;
 }
 
 .settings-section + .settings-section {
