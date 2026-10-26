@@ -22,18 +22,19 @@ function normalizeCards(list: CardData[]): CardData[] {
 function loadFromStorage(): CardData[] | null {
   try {
     const version = localStorage.getItem(VERSION_KEY);
-    if (version !== CURRENT_VERSION) {
-      // Version mismatch or first run: clear old data, use preset
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(SELECTED_KEY);
-      localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-      return null;
-    }
     const raw = localStorage.getItem(STORAGE_KEY);
+    // 版本变化只做迁移，绝不清空用户数据：
+    // 升级后保留已保存的展牌，仅在确认确实没有数据时才回退到预设
     if (raw) {
       const data = JSON.parse(raw);
-      // Ignore an empty list so the preset is shown again after a full delete
-      if (Array.isArray(data) && data.length > 0) return normalizeCards(data);
+      if (Array.isArray(data)) {
+        // 空数组代表用户主动删光了全部展牌，尊重该状态，不再塞回预设
+        if (version !== CURRENT_VERSION) localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+        return normalizeCards(data);
+      }
+    }
+    if (version !== CURRENT_VERSION) {
+      localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
     }
   } catch { /* ignore */ }
   return null;
